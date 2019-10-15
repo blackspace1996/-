@@ -1,0 +1,5 @@
+from MyApp.models import Grades,students
+from django.utils import timezone
+from datetime import *
+Grades.objects.all()/查看所有数据
+
