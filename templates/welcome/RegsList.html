@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<!-- 感谢bootstrap4提供的模板 -->
+<html lang="zh">
+{% load staticfiles %}
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="stylesheet" href="/static/css/font-awesome-4.7.0/css/font-awesome.min.css">
+    <title>{{ unity.unityName }}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'welcome/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="{% static 'welcome/dashboard.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/font-awesome-4.7.0/css/font-awesome.min.css">
+    <style type="text/css">/* Chart.js */
+    @-webkit-keyframes chartjs-render-animation {
+        from {
+            opacity: 0.99
+        }
+        to {
+            opacity: 1
+        }
+    }
+
+    @keyframes chartjs-render-animation {
+        from {
+            opacity: 0.99
+        }
+        to {
+            opacity: 1
+        }
+    }
+
+    .chartjs-render-monitor {
+        -webkit-animation: chartjs-render-animation 0.001s;
+        animation: chartjs-render-animation 0.001s;
+    }</style>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="{% url 'index' %}?unityID={{ unity.unityID }}">{{ unity.unityName }}</a>
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto font-weight-bold">
+            <li class="nav-item">
+                <a class="nav-link" href="?Type=News&unityID={{ unity.unityID }}">联盟动态</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="?Type=Regs&unityID={{ unity.unityID }}">规章制度</a>
+            </li>
+              <li class="nav-item">
+                <a class="nav-link" href="?Type=Company&unityID={{ unity.unityID }}">加盟公司</a>
+            </li>
+        </ul>
+        <a href="{% url 'login' %}">
+            <button class="btn btn-outline-info my-2 my-sm-0">企业登录</button>
+        </a>
+    </div>
+</nav>
+ <img src="/static/img/{{ unity.unityName }}/bg.jpg"
+             style="position: fixed;width:100vw; height:100vh;z-index: -1"/>
+<div class="container">
+    <div class="row bg-light" style="opacity: 0.9">
+        <nav class="col-md-2 d-none d-md-block bg-light navbar-light border-dark border-right">
+            <div class="sidebar-sticky">
+                <ul class="navbar-nav" style="font-size:25px;font-weight: bold">
+                    <li class="nav-item">
+                        <a class="nav-link" href="?Type=News&unityID={{ unity.unityID }}">
+                            <i class="fa fa-envelope-open-o"></i>
+                            联盟动态
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="?Type=Regs&unityID={{ unity.unityID }}">
+                            <i class="fa fa-calendar-o"></i>
+                            规章制度
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="?Type=Company&unityID={{ unity.unityID }}">
+                            <i class="fa fa-group"></i>
+                            加盟公司 <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div class="chartjs-size-monitor"
+                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                <div class="chartjs-size-monitor-expand"
+                     style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                </div>
+                <div class="chartjs-size-monitor-shrink"
+                     style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                </div>
+            </div>
+            <h1>规章制度</h1>
+            <div class="table-responsive border-top border-dark">
+                <table class="table table-striped table-sm" style="font-size: 16px;">
+                    <thead>
+                    <tr>
+                        <th>#
+                            <div class="dropdown show" style="display: inline-block; visibility: hidden">
+                                <a class="btn btn-secondary dropdown-toggle btn-sm" href="#" role="button"
+                                   id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                                   aria-expanded="false" style="height: 28px;">排序</a>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th>制度名称
+                            <div class="dropdown show" style="display: inline-block; visibility: hidden">
+                                <a class="btn btn-secondary dropdown-toggle btn-sm" href="#" role="button"
+                                   id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                                   aria-expanded="false" style="height: 28px;">排序</a>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th>发布日期
+                            <div class="dropdown show" style="display: inline-block">
+                                <a class="btn btn-secondary dropdown-toggle btn-sm" href="#" role="button"
+                                   id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                                   aria-expanded="false" style="height: 28px;"></a>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                    <a class="dropdown-item" href="?Type=Regs&order=1">从旧到新</a>
+                                    <a class="dropdown-item" href="?Type=Regs&order=2">从新到旧</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th>最后修改日期</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for reg in SysRegs_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td style="font-weight: bold"><a
+                                    href="{% url 'RegsDetails' %}?id={{ reg.id }}&unityID={{ unity.unityID }}"
+                                    style="color: darkslateblue">{{ reg.regName }}</a></td>
+                            <td>{{ reg.createTime|date:"Y-m-d" }}</td>
+                            <td>{{ reg.updateTime|date:"Y-m-d H:i:s" }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div class="text-center" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-group mr-2" role="group" aria-label="First group">
+                        {% if SysRegs_list.has_previous %}
+                            <a class="btn btn-outline-secondary" style="text-decoration: none;"
+                               href="?page={{ SysRegs_list.previous_page_number }}&Type=Regs&order={{ order }}"
+                               aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        {% endif %}
+                        {% for pg in SysRegs_list.paginator.page_range %}
+                            {% if SysRegs_list.number == pg %}
+                                <a class="btn btn-outline-dark" style="text-decoration: none;"
+                                   href="?page={{ pg }}&order={{ order }}&Type=Regs">{{ pg }}</a>
+                            {% else %}
+                                <a class="btn btn-outline-secondary" style="text-decoration: none;"
+                                   href="?page={{ pg }}&order={{ order }}&Type=Regs">{{ pg }}</a>
+                            {% endif %}
+                        {% endfor %}
+                        {% if SysRegs_list.has_next %}
+                            <a class="btn btn-outline-secondary"
+                               href="?page={{ SysRegs_list.next_page_number }}&order={{ order }}&Type=Regs "
+                               style="text-decoration: none;" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+</body>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+<script type="text/javascript">$('.dropdown-toggle').dropdown()</script>
+</html>

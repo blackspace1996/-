@@ -1,0 +1,57 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}播种信息{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/table_tr.css'%}">
+{% endblock %}
+{% block functionClass6 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>生产管理</li>
+    <li class="active"><a href="{% url 'sowingInfo' %}">播种信息</a></li>
+    <li>播种详细信息</li>
+{% endblock %}
+{% block tips%}<span style="color:red">&lt本模块所有操作均记录操作者并同时检测数据库是否被非法篡改&gt</span>{% endblock %}
+{% block addOrReturn %}
+    <a href="{% url 'sowingInfo' %}" style="float:right ">
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+        返回
+    </a>
+{% endblock %}
+{% block functionContent %}
+    <div class="col-lg-offset-1 col-lg-10">
+        <table class="table-bordered table-hover text-center" style="width: 100%">
+            <tr class="tr1">
+                <td>批次别名</td>
+                <td>{{ currentInfo.sowingName }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>播种时间</td>
+                <td>{{ currentInfo.sowingTime }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>播种备注</td>
+                <td>{{ currentInfo.sowingTips }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>播种公司</td>
+                <td>{{ currentInfo.sowingCompany.companyName }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>种植产品</td>
+                <td>{{ currentInfo.sowingProduction.rawProductionName }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>种植地块</td>
+                <td>{{ currentInfo.sowingBlock.blockName }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>播种人</td>
+                <td>{{ currentInfo.sowingMember }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>记录人</td>
+                <td>{{ currentInfo.recorder }}</td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

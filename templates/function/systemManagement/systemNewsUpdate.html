@@ -1,0 +1,76 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}修改动态{% endblock %}
+{% block css %}{% endblock %}
+{% block functionClass1 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+     <li>信息展示</li>
+    <li class="active"><a href="{% url 'systemNews' %}">系统动态</a></li>
+    <li class="active">修改动态</li>
+{% endblock %}
+{% block addOrReturn %}
+    <a href="{% url 'systemNews' %}" style="float:right">
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+    </a>
+{% endblock %}
+{% block functionContent %}
+    <form class="form-horizontal"  method="post">
+      <div class="form-group">
+        <label for="inputEmail3" class="col-sm-2 control-label">动态标题</label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" name="NewsTitle" placeholder="请输入标题" value="{{ raw_news.title }}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="inputPassword3" class="col-sm-2 control-label ">动态内容</label>
+        <div class="col-sm-8">
+            <textarea name="NewsDescription" id="editor">{{ raw_news.description }}</textarea>
+        </div>
+      </div>
+      <div class="form-group">
+          <label for="unityID" class="col-sm-2 control-label ">所属联盟</label>
+            <div class="col-sm-3">
+                <select class="form-control" name="unityID">
+                {% if request.user.identityClass == 1 %}
+                {% endif %}
+                {% for unity in unity_list %}
+                  <option value="{{ unity.unityID }}">{{ unity.unityName }}</option>
+                {% endfor %}
+                </select>
+            </div>
+      </div>
+        {% if error.title %}
+            <div class="alert alert-danger col-md-offset-2 col-md-8 " role="alert">{{ error.NewsTitle.0 }}</div>
+        {% endif %}
+        {% if error.description %}
+            <div class="alert alert-danger col-md-offset-2 col-md-8" role="alert">{{ error.NewsDescription.0 }}</div>
+        {% endif %}
+        {% if success %}
+            <div class="alert alert-success col-md-offset-2 col-md-8" role="alert">修改成功,<a href="{% url 'systemNews' %}">点击此处</a>返回查看</div>
+        {% endif %}
+      <input style="display: none" name="update_id" value="{{ raw_news.id }}"/>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-default">确认修改</button>
+        </div>
+      </div>
+        {% csrf_token %}
+    </form>
+
+
+
+    <script src="{% static 'js/ckeditor.js' %}"></script>
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#editor'),
+                {
+
+                    ckfinder: {
+                        uploadUrl: 'http://127.0.0.1:8000/imageUpload/',
+                    },
+                })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+{% endblock %}

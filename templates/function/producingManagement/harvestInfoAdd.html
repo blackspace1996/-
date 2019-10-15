@@ -1,0 +1,66 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}收获确认{% endblock %}
+{% block css %}
+{% endblock %}
+{% block functionClass6 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>生产管理</li>
+    <li class="active"><a href="{% url 'harvestInfo' %}">收获信息</a></li>
+    <li>添加收货信息</li>
+{% endblock %}
+{% block tips%}<span style="color:red">&lt本模块所有操作均记录操作者并同时检测数据库是否被非法篡改&gt</span>{% endblock %}
+{% block addOrReturn %}
+    <a href="{% url 'measuresConfirming' %}?id={{ current_batch.id }}" style="float:right">
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+        返回
+    </a>
+{% endblock %}
+{% block functionContent %}
+    <form class="form-horizontal"  method="post" action="{% url 'harvestInfoAdd' %}">
+        <div class="form-group">
+            <label for="harvestMember" class="col-sm-2 control-label ">收获负责人</label>
+            <div class="col-sm-3">
+                <select class="form-control" name="harvestMember">
+                {% for member in member_list %}
+                  <option value="{{ member.memberID }}">{{ member.memberName }}</option>
+                {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="harvestTips" class="col-sm-2 control-label">收获备注</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" name="harvestTips" placeholder="请输入本次收获需要备注的信息">
+            </div>
+        </div>
+      <input style="display: none" name="batch_id" value="{{ current_batch.id }}" />
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-default">确认收获</button>
+        </div>
+      </div>
+        {% csrf_token %}
+    </form>
+
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" src="{% static 'datetimepicker/jquery/jquery-1.8.3.min.js' %}" charset="UTF-8"></script>
+    <script type="text/javascript" src="{% static 'datetimepicker/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'datetimepicker/js/bootstrap-datetimepicker.js' %}" charset="UTF-8"></script>
+    <script type="text/javascript" src="{% static 'datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js' %}" charset="UTF-8"></script>
+    <script type="text/javascript">
+        $('.dropdown-toggle').dropdown();
+        $('.form_date').datetimepicker({
+            language:  'zh-CN',
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 0,
+            endDate:new Date()
+        });
+    </script>
+{% endblock %}

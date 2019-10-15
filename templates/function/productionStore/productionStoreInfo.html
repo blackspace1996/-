@@ -1,0 +1,193 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}库存管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/LogoColor.css' %}">
+{% endblock %}
+{% block functionClass8 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>库存管理</li>
+    <li class="active"><a href="{% url 'storeInfo' %}">入库</a></li>
+{% endblock %}
+{% block tips%}<span style="color:red">&lt本模块所有操作均记录操作者并同时检测数据库是否被非法篡改&gt</span>{% endblock %}
+{% block addOrReturn %}
+{% endblock %}
+{% block functionContent %}
+    {% if request.user.identityClass == 1 %}
+        <form class="form-inline">
+            <div class="form-group col-sm-6 text-center">
+                <label for="company_query" class="control-label" >公司&nbsp;&nbsp;</label>
+                <select class="form-control text-center" id="company_query" name="company_query" onchange="getCurrentCompany()">
+                    {% for company in companyInfo_list %}
+                        <option value="{{ company.companyID }}" {% if company_current == company.companyID %}selected = "selected"{% endif %}>{{ company.companyName }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-sm-6 text-center">
+                <label for="rawProduction_current" class="control-label ">品种&nbsp;&nbsp;</label>
+                <select class="form-control text-center" id="rawProduction_current" name="rawProduction_current" onchange="getCurrentRawProduction()">
+                {% if rawProductionInfo_list %}
+                    {% for rawProduction in rawProductionInfo_list %}
+                        <option value="{{ rawProduction.id }}" {% if rawProduction_current_id == rawProduction.id %}selected = "selected"{% endif %}>{{ rawProduction.rawProductionName }}</option>
+                    {% endfor %}
+                {% else %}
+                    <option value="">无</option>
+                {% endif %}
+                </select>
+            </div>
+        </form>
+        <div class="form-horizontal" style="visibility: hidden">
+            <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+            <div class="col-sm-10">
+              <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
+            </div>
+        </div>
+        {% if storeInfo_list_get %}
+            <table class="table table-bordered table-hover table-striped text-center">
+                <tr>
+                    <td>批次别名</td>
+                    <td>播种产品</td>
+                    <td>剩余数量</td>
+                    <td>单位</td>
+                    <td>入库时间(天)
+                        {% if order == 1 %}
+                            <a href="?order=2"><span class="glyphicon glyphicon-arrow-up small" aria-hidden="true"></span></a>
+                        {% else %}
+                            <a href="?order=1"><span class="glyphicon glyphicon-arrow-down small" aria-hidden="true"></span></a>
+                        {% endif %}
+                    </td>
+                    <td>数据状态</td>
+                    <td>销售记录</td>
+                </tr>
+            {% for storeInfo in storeInfo_list %}
+                <tr>
+                    <td><a href="{% url 'storeInfoDetails' %}?id={{ storeInfo.id }}">{{ storeInfo.batch.harvestBatch.sowingName }}</a></td>
+                    <td>{{ storeInfo.batch.harvestBatch.sowingProduction.rawProductionName }}</td>
+                    <td>{{ storeInfo.restAmount }}</td>
+                    <td>{{ storeInfo.unit }}</td>
+                    <td>{{ storeInfo.storingPeriod }}</td>
+                    <td>
+                        {% if storeInfo.isNormal %}
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        {% else %}
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if storeInfo.amount == storeInfo.restAmount %}
+                            尚未销售
+                        {% else %}
+                            <a href="{% url 'saleInfo' %}?id={{ storeInfo.id }}&pointed=1">查看销售记录</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </table>
+            {% if not storeInfo_list %}
+                <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有库存信息</div>
+            {% endif %}
+        {% endif %}
+    {% else %}
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="rawProduction_current" class="col-sm-5 control-label">品种&nbsp;&nbsp;</label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="rawProduction_current" name="rawProduction_current" onchange="getCurrentRawProduction_operator()">
+                    {% if rawProductionInfo_list %}
+                        {% for rawProduction in rawProductionInfo_list %}
+                            <option value="{{ rawProduction.id }}" {% if rawProduction_current_id == rawProduction.id %}selected = "selected"{% endif %}>{{ rawProduction.rawProductionName }}</option>
+                        {% endfor %}
+                    {% else %}
+                        <option value="">无</option>
+                    {% endif %}
+                    </select>
+                </div>
+            </div>
+        </form>
+        {% if storeInfo_list_get %}
+            <table class="table table-bordered table-hover table-striped text-center">
+                <tr>
+                    <td>批次别名</td>
+                    <td>播种产品</td>
+                    <td>剩余数量</td>
+                    <td>单位</td>
+                    <td>入库时间(天)
+                        {% if order == 1 %}
+                            <a href="?order=2"><span class="glyphicon glyphicon-arrow-up small" aria-hidden="true"></span></a>
+                        {% else %}
+                            <a href="?order=1"><span class="glyphicon glyphicon-arrow-down small" aria-hidden="true"></span></a>
+                        {% endif %}
+                    </td>
+                    <td>数据状态</td>
+                    <td>出售情况</td>
+                    <td>销售情况</td>
+                </tr>
+            {% for storeInfo in storeInfo_list %}
+                <tr>
+                    <td><a href="{% url 'storeInfoDetails' %}?id={{ storeInfo.id }}">{{ storeInfo.batch.harvestBatch.sowingName }}</a></td>
+                    <td>{{ storeInfo.batch.harvestBatch.sowingProduction.rawProductionName }}</td>
+                    <td>{{ storeInfo.restAmount }}</td>
+                    <td>{{ storeInfo.unit }}</td>
+                    <td>{{ storeInfo.storingPeriod }}</td>
+                    <td>
+                        {% if storeInfo.isNormal %}
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        {% else %}
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        {% endif %}
+                    </td>
+                        {% if storeInfo.restAmount %}
+                            <td><a href="{% url 'saleInfoAdd' %}?id={{ storeInfo.id }}">出售</a></td>
+                        {% else %}
+                            <td style="color: #449d44">已售完</td>
+                        {% endif %}
+                    <td>
+                        {% if storeInfo.amount == storeInfo.restAmount %}
+                            尚未销售
+                        {% else %}
+                            <a href="{% url 'saleInfo' %}?id={{ storeInfo.id }}&pointed=1">查看销售记录</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </table>
+            {% if not storeInfo_list %}
+                <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有库存信息</div>
+            {% endif %}
+        {% endif %}
+    {% endif  %}
+{% endblock %}
+{% block pagination %}
+    {% if storeInfo_list %}
+        <nav aria-label="Page navigation" class="text-center">
+          <ul class="pagination">
+            {% if storeInfo_list.has_previous %}
+            <li>
+              <a href="?page={{ storeInfo_list.previous_page_number }}&order={{ order }}&company_current={{ company_current }}&rawProduction_current={{ rawProduction_current_id }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for pg in storeInfo_list.paginator.page_range %}
+                {% if storeInfo_list.number == pg %}
+                    <li class="active"><a href="?page={{ pg }}&order={{ order }}&company_current={{ company_current }}&rawProduction_current={{ rawProduction_current_id }}">{{ pg }}</a></li>
+                {% else %}
+                    <li><a href="?page={{ pg }}&order={{ order }}&company_current={{ company_current }}&rawProduction_current={{ rawProduction_current_id }}">{{ pg }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if storeInfo.has_next %}
+            <li>
+              <a href="?page={{ storeInfo_list.next_page_number}}&order={{ order }}&company_current={{ company_current }}&rawProduction_current={{ rawProduction_current_id }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+
+    {% endif %}
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/deleteTips.js'%}"></script>
+<script src="{% static 'js/getCurrentMeasures.js'%}"></script>
+{% endblock %}

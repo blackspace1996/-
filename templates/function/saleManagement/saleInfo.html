@@ -1,0 +1,114 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}销售管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/LogoColor.css' %}">
+{% endblock %}
+{% block functionClass10 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>销售管理</li>
+    <li class="active"><a href="{% url 'sowingInfo' %}">销售信息</a></li>
+{% endblock %}
+{% block tips%}<span style="color:red">&lt本模块所有操作均记录操作者并同时检测数据库是否被非法篡改&gt</span>{% endblock %}
+{% block addOrReturn %}
+    {% if pointed %}
+        <a href="{% url 'storeInfo' %}?id={{ id }}" style="float:right">
+            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+            返回销售环节
+        </a>
+    {% endif %}
+{% endblock %}
+{% block functionContent %}
+    {% if request.user.identityClass == 1 %}
+            <form method="post" class="form-horizontal" action="{% url 'harvestInfo' %}" >
+                <label for="company" class="col-sm-3 control-label ">公司名称</label>
+                <div class="form-group">
+                    <div class="col-sm-5">
+                        <select class="form-control" id="company_query" name="company_query">
+                            {% for company in companyInfo_list %}
+                                <option value="{{ company.companyID }}" {% if selected_id == company.companyID %}selected = "selected"{% endif %}>{{ company.companyName }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <a onclick="getCurrentCompany()" class="btn btn-default small">确认查看</a>
+                </div>
+                {% csrf_token %}
+            </form>
+    {% endif %}
+    {% if saleInfo_list_get %}
+            <table class="table table-bordered table-hover table-striped text-center">
+                <tr>
+                    <td>销售名称</td>
+                    <td>销售批次名称</td>
+                    <td>购买人</td>
+                    <td>购买数量</td>
+                    <td>购买单位</td>
+                    <td>购买时间
+                        {% if order == 1 %}
+                            <a href="?order=2&company_current={{ company_current }}&pointed={{ pointed }}&id={{ id }}"><span class="glyphicon glyphicon-arrow-up small" aria-hidden="true"></span></a>
+                        {% else %}
+                            <a href="?order=1&company_current={{ company_current }}&pointed={{ pointed }}&id={{ id }}"><span class="glyphicon glyphicon-arrow-down small" aria-hidden="true"></span></a>
+                        {% endif %}
+                    </td>
+                    <td>二维码生成</td>
+                    <td>数据状态</td>
+                </tr>
+            {% for saleInfo in saleInfo_list %}
+                <tr>
+                    <td><a href="{% url 'saleInfoDetails' %}?id={{ saleInfo.id }}">{{ saleInfo.saleName }}</a></td>
+                    <td>{{ saleInfo.saleBatch.batch.harvestBatch.sowingProduction.rawProductionName }}</td>
+                    <td>{{ saleInfo.buyer }}</td>
+                    <td>{{ saleInfo.amount }}</td>
+                    <td>{{ saleInfo.saleBatch.unit }}</td>
+                    <td>{{ saleInfo.saleTime }}</td>
+                    <td><a target="_blank" href="{% url 'qrCode' %}?id={{ saleInfo.id }}" style="text-decoration: none">二维码生成</a></td>
+                    <td>
+                        {% if saleInfo.isNormal %}
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        {% else %}
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </table>
+            {% if not saleInfo_list %}
+
+                <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有销售信息</div>
+            {% endif %}
+    {% endif %}
+{% endblock %}
+{% block pagination %}
+    {% if saleInfo_list %}
+        <nav aria-label="Page navigation" class="text-center">
+          <ul class="pagination">
+            {% if saleInfo_list.has_previous %}
+            <li>
+              <a href="?page={{ saleInfo_list.previous_page_number }}&company_current={{ company_current }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for pg in saleInfo_list.paginator.page_range %}
+                {% if saleInfo_list.number == pg %}
+                    <li class="active"><a href="?page={{ pg }}&order={{ order }}&company_current={{ company_current }}">{{ pg }}</a></li>
+                {% else %}
+                    <li><a href="?page={{ pg }}&order={{ order }}&company_current={{ company_current }}&pointed={{ pointed }}"&id={{ id }}>{{ pg }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if saleInfo_list.has_next %}
+            <li>
+              <a href="?page={{ saleInfo_list.next_page_number}}&company_current={{ company_current }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+
+    {% endif %}
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/deleteTips.js'%}"></script>
+<script src="{% static 'js/getCurrentCompany.js'%}"></script>
+{% endblock %}

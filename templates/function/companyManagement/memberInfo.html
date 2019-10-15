@@ -1,0 +1,174 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}机构管理{% endblock %}
+{% block css %}{% endblock %}
+{% block functionClass2 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>机构管理</li>
+    <li class="active"><a href="{% url 'memberInfo' %}">员工信息</a></li>
+{% endblock %}
+{% block addOrReturn %}
+    {% if request.user.identityClass == 2 %}
+    <a href="{% url 'memberInfoAdd' %}" style="float:right">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        添加
+    </a>
+    {% endif %}
+{% endblock %}
+{% block functionContent %}
+    {% if request.user.identityClass == 1 %}
+        <form method="post" class="form-horizontal" action="{% url 'memberInfo' %}" >
+            <label for="super_company" class="col-sm-3 control-label ">公司名称</label>
+            <div class="form-group">
+                <div class="col-sm-5">
+                    <select class="form-control" id="company_query" name="company_query">
+                        {% for company in companyInfo_list %}
+                            <option value="{{ company.companyID }}" {% if selected_id == company.companyID %}selected = "selected"{% endif %}>{{ company.companyName }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <a onclick="getCurrentCompany()" class="btn btn-default small">确认查看</a>
+            </div>
+            {% csrf_token %}
+        </form>
+        {% if member_list_get %}
+            <table class="table table-bordered table-hover table-striped text-center">
+                <tr>
+                    <td>员工姓名</td>
+                    <td>隶属公司</td>
+                    <td>职位</td>
+                    <td>加入时间
+                        {% if order == 1 %}
+                            <a href="?order=2&company_current={{ company_current }}"><span class="glyphicon glyphicon-arrow-up small" aria-hidden="true"></span></a>
+                        {% else %}
+                            <a href="?order=1&company_current={{ company_current }}"><span class="glyphicon glyphicon-arrow-down small" aria-hidden="true"></span></a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% for member in member_list %}
+                <tr>
+                    <td>{{ member.memberName }}</td>
+                    <td>{{ member.companyName.companyName }}</td>
+                    <td>{{ member.position }}</td>
+                    <td>{{ member.hireDate }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+            {% if not member_list %}
+                <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有员工信息</div>
+            {% endif %}
+        {% endif %}
+    {% endif  %}
+    {% if request.user.identityClass == 2 %}
+        <form method="post" class="form-horizontal" action="{% url 'memberInfo' %}" >
+            <label for="company_query" class="col-sm-3 control-label ">公司名称</label>
+            <div class="form-group">
+                <div class="col-sm-5">
+                    <select class="form-control" id="company_query" name="company_query">
+                        {% if companyInfo_list %}
+                            {% for company in companyInfo_list %}
+                                <option value="{{ company.companyID }}" {% if selected_id == company.companyID %}selected = "selected"{% endif %}>{{ company.companyName }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option>请添加公司信息</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <a onclick="getCurrentCompany()" class="btn btn-default small">确认查看</a>
+            </div>
+            {% csrf_token %}
+        </form>
+        {% if member_list_get %}
+            <table class="table table-bordered table-hover table-striped text-center">
+                <tr>
+                    <td>员工姓名</td>
+                    <td>隶属公司</td>
+                    <td>职位</td>
+                    <td>加入时间
+                        {% if order == 1 %}
+                            <a href="?order=2&company_current={{ company_current }}"><span class="glyphicon glyphicon-arrow-up small" aria-hidden="true"></span></a>
+                        {% else %}
+                            <a href="?order=1&company_current={{ company_current }}"><span class="glyphicon glyphicon-arrow-down small" aria-hidden="true"></span></a>
+                        {% endif %}
+                    </td>
+                    {% if company_current == request.user.company.companyID %}
+                        <td>
+                            编辑
+                        </td>
+                    {% endif %}
+                </tr>
+            {% for member in member_list %}
+                <tr>
+                    <td><a href="{% url 'memberInfoDetails' %}?id={{ member.memberID }}">{{ member.memberName }}</a></td>
+                    <td>{{ member.companyName.companyName }}</td>
+                    <td>{{ member.position }}</td>
+                    <td>{{ member.hireDate }}</td>
+                    {% if company_current == request.user.company.companyID %}
+                        <td>
+                            <a href="{% url 'memberInfoUpdate' %}?id={{ member.memberID }}">修改  </a>
+                            <a data-toggle="modal" data-target="#myModal" onclick="delID({{ member.memberID }})">删除</a>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </table>
+            {% if not member_list %}
+                <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有员工信息</div>
+            {% endif %}
+        {% endif %}
+    {% endif  %}
+{% endblock %}
+{% block pagination %}
+    {% if member_list %}
+        <nav aria-label="Page navigation" class="text-center">
+          <ul class="pagination">
+            {% if member_list.has_previous %}
+            <li>
+              <a href="?page={{ member_list.previous_page_number }}&order={{ order }}&company_current={{ company_current }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for pg in member_list.paginator.page_range %}
+                {% if member_list.number == pg %}
+                    <li class="active"><a href="?page={{ pg }}&order={{ order }}&company_current={{ company_current }}">{{ pg }}</a></li>
+                {% else %}
+                    <li><a href="?page={{ pg }}&order={{ order }}">{{ pg }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if member_list.has_next %}
+            <li>
+              <a href="?page={{ member_list.next_page_number}}&order={{ order }}&company_current={{ company_current }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">提示信息</h4>
+              </div>
+              <div class="modal-body">
+                确认删除?
+              </div>
+              <div class="modal-footer">
+                <input type="hidden" id="delete_id"/>
+                <input type="hidden" id="url_root" value="{% url 'memberInfoDelete' %}"/>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <a onclick="urlSubmit()" class="btn btn-primary">确认</a>
+              </div>
+            </div>
+          </div>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/deleteTips.js'%}"></script>
+<script src="{% static 'js/getCurrentCompany.js'%}"></script>
+
+{% endblock %}

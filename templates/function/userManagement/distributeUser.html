@@ -1,0 +1,101 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}分发账号{% endblock %}
+{% block css %}{% endblock %}
+{% block functionClass3 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+   <li>账号管理</li>
+    <li class="active"><a href="{% url 'distributeUser' %}"></a>分发账号</li>
+{% endblock %}
+{% block addOrReturn %}
+    <a href="{% url 'userList' %}" style="float:right">
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+        返回
+    </a>
+{% endblock %}
+{% block functionContent %}
+    <form class="form-horizontal" method="post" action="{% url 'distributeUser' %}">
+        <div class="form-group">
+            <label for="username" class="col-sm-4 control-label">账号</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="username" placeholder="请输入注册账号">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="password" class="col-sm-4 control-label">密码</label>
+            <div class="col-sm-6">
+                <input type="password" class="form-control" name="password" id="pwd" placeholder="请输入密码">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="title" class="col-sm-4 control-label">请重复密码</label>
+            <div class="col-sm-6">
+                <input type="password" class="form-control" name="password-repeat" id="pwd_repeat" placeholder="请再次输入密码"
+                       onkeyup="validate()">
+            </div>
+            <div id="pwd_tip" style="vertical-align: middle;padding-top:7px;margin-top:0;margin-bottom:0 "></div>
+        </div>
+        <div class="form-group">
+            <label for="holder" class="col-sm-4 control-label">持有者</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="holder" placeholder="请输入本账号持有者名字">
+            </div>
+        </div>
+        {% if request.user.identityClass == 0 %}
+            <input id="identity" style="display: none" value="admin">
+            <input type="text" style="display: none" class="form-control" name="identityClass" value="1">
+        {% elif request.user.identityClass == 1 %}
+            <input id="identity" style="display: none" value="admin">
+            <input type="text" style="display: none" class="form-control" name="identityClass" value="2">
+        {% elif request.user.identityClass == 2 %}
+            <input id="identity" style="display: none" value="admin">
+            <input type="text" style="display: none" class="form-control" name="identityClass" value="3">
+        {% endif %}
+        <div class="form-group">
+            {% if request.user.identityClass == 0 %}
+                <label for="company" class="col-sm-4 control-label ">账号隶属联盟</label>
+            {% else %}
+                <label for="company" class="col-sm-4 control-label ">账号隶属公司</label>
+            {% endif %}
+            <div class="col-sm-6">
+                <select class="form-control" name="company">
+                    {% if request.user.identityClass == 0 %}
+                        <option value="">请选择账号隶属联盟</option>unity_list
+                        {% for unity in unity_list %}
+                            <option value="{{ unity.unityID }}">{{ unity.unityName }}</option>
+                        {% endfor %}
+                    {% else %}
+                        <option value="">请选择账号隶属公司</option>
+                        {% for company in company_list %}
+                            <option value="{{ company.companyID }}">{{ company.companyName }}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+            </div>
+        </div>
+        {% if usernameError %}
+            <div class="alert alert-danger col-md-offset-4 col-md-6 " role="alert">该用户名已存在</div>
+        {% endif %}
+        {% if error.username %}
+            <div class="alert alert-danger col-md-offset-4 col-md-6 " role="alert">{{ error.username.0 }}</div>
+        {% endif %}
+        {% if error.password %}
+            <div class="alert alert-danger col-md-offset-4 col-md-6 " role="alert">{{ error.password.0 }}</div>
+        {% endif %}
+        {% if error.holder %}
+            <div class="alert alert-danger col-md-offset-4 col-md-6 " role="alert">{{ error.holder.0 }}</div>
+        {% endif %}
+        {% if error.company %}
+            <div class="alert alert-danger col-md-offset-4 col-md-6 " role="alert">{{ error.company.0 }}</div>
+        {% endif %}
+        <div class="form-group">
+            <div class="col-sm-offset-6 col-sm-6">
+                <button type="submit" id="register" class="btn btn-default">注册</button>
+            </div>
+        </div>
+        {% csrf_token %}
+    </form>
+{% endblock %}
+{% block script %}
+    <script src="{% static 'js/distributeUser.js' %}"></script>
+{% endblock %}

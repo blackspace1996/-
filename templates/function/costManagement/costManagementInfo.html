@@ -1,0 +1,215 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}成本管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/LogoColor.css' %}">
+{% endblock %}
+{% block functionClass9 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>成本管理</li>
+    <li class="active"><a href="{% url 'costManagementInfo' %}">收支信息</a></li>
+{% endblock %}
+{% block tips%}<span style="color:red">&lt本模块所有操作均记录操作者并同时检测数据库是否被非法篡改&gt</span>{% endblock %}
+{% block addOrReturn %}
+    <a href="{% url 'costManagementInfoAdd' %}" style="float:right">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        添加
+    </a>
+{% endblock %}
+{% block functionContent %}
+    <div class="form-inline">
+        <div class="form-group col-sm-offset-2 col-sm-1">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    {% if Type == 'income' %}收入{% endif %}
+                    {% if Type == 'cost' %}支出{% endif %}
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a href="?Type=income">收入</a></li>
+                    <li><a href="?Type=cost">支出</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="form-group col-sm-offset-1">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    {% if Time == 'all' %}全部{% endif %}
+                    {% if Time == 'week' %}本周{% endif %}
+                    {% if Time == 'month' %}本月{% endif %}
+                    {% if Time == 'year' %}本年{% endif %}
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a href="?Time=all&Type={{ Type }}">全部</a></li>
+                    <li><a href="?Time=week&Type={{ Type }}">本周</a></li>
+                    <li><a href="?Time=month&Type={{ Type }}">本月</a></li>
+                    <li><a href="?Time=year&Type={{ Type }}">本年</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="form-group col-sm-offset-2">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon3" style="background-color: #2d6ca2;color: white">累计金额</span>
+              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" value="{{ amount }}" readonly>
+            </div>
+        </div>
+    </div>
+    <table class="table table-bordered table-hover table-striped text-center" style="position:relative;top:20px;">
+        {% if Type == 'income' %}
+            {% if income_list %}
+                <tr>
+                    <td>收入类型</td>
+                    <td>收入名称</td>
+                    <td>收入金额</td>
+                    <td>收入时间
+                        {% if order == 1 %}
+                            <a href="?order=2&Time={{ Time }}&Type={{ Type }}"><span class="glyphicon glyphicon-arrow-up small" aria-hidden="true"></span></a>
+                        {% else %}
+                            <a href="?order=1&Time={{ Time }}&Type={{ Type }}"><span class="glyphicon glyphicon-arrow-down small" aria-hidden="true"></span></a>
+                        {% endif %}
+                    </td>
+                    <td>数据状态</td>
+                    <td><span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span></td>
+                </tr>
+                {% for income in income_list %}
+                    <tr>
+                        <td>
+                            {% if income.incomeType == "sale"  %}
+                                销售
+                            {% elif income.incomeType == "salary" %}
+                                补贴
+                            {% else %}
+                                其他
+                            {% endif %}
+                        </td>
+                        <td>{{ income.incomeName }}</td>
+                        <td>{{ income.incomeAmount }}</td>
+                        <td>{{ income.incomeTime }}</td>
+                        <td>
+                            {% if income.isNormal %}
+                                <span class="glyphicon glyphicon-ok" style="color:lightgreen" aria-hidden="true"></span>
+                            {% else %}
+                                <span class="glyphicon glyphicon-remove"  aria-hidden="true"></span>
+                            {% endif %}
+                        </td>
+                        <td><a href="{% url 'costManagementInfoDetails' %}?Type={{ Type }}&id={{ income.id }}">更多</a></td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert" style="top:20px;">暂时没有收入信息</div>
+            {% endif %}
+        {% else %}
+            {% if cost_list %}
+                <tr>
+                    <td>花销类型</td>
+                    <td>花销名称</td>
+                    <td>花销金额</td>
+                    <td>花销时间
+                        {% if order == 1 %}
+                            <a href="?order=2&Time={{ Time }}&Type={{ Type }}"><span class="glyphicon glyphicon-arrow-up small" aria-hidden="true"></span></a>
+                        {% else %}
+                            <a href="?order=1&Time={{ Time }}&Type={{ Type }}"><span class="glyphicon glyphicon-arrow-down small" aria-hidden="true"></span></a>
+                        {% endif %}
+                    </td>
+                    <td>数据状态</td>
+                    <td>更多</td>
+                </tr>
+                {% for cost in cost_list %}
+                    <tr>
+                        <td>
+                            {% if cost.costType == "food" %}
+                                餐饮
+                            {% elif cost.costType == "purchase" %}
+                                采购
+                            {% elif cost.costType == "waterCharge" %}
+                                水费
+                            {% elif cost.costType == "electricCharge" %}
+                                电费
+                            {% elif cost.costType == "salary" %}
+                                工资
+                            {% else %}
+                                其他
+                            {% endif %}
+                        </td>
+                        <td>{{ cost.costName }}</td>
+                        <td>{{ cost.costAmount }}</td>
+                        <td>{{ cost.costTime }}</td>
+                        <td>
+                            {% if cost.isNormal %}
+                                <span class="glyphicon glyphicon-ok" style="color:lightgreen" aria-hidden="true"></span>
+                            {% else %}
+                                <span class="glyphicon glyphicon-remove"  aria-hidden="true"></span>
+                            {% endif %}
+                        </td>
+                        <td><a href="{% url 'costManagementInfoDetails' %}?Type={{ Type }}&id={{ cost.id }}">详情</a></td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert" style="top:20px;">暂时没有花销信息</div>
+            {% endif %}
+        {% endif %}
+    </table>
+{% endblock %}
+{% block pagination %}
+    {% if income_list %}
+        <nav aria-label="Page navigation" class="text-center">
+          <ul class="pagination">
+            {% if income_list.has_previous %}
+            <li>
+              <a href="?page={{ income_list.previous_page_number }}&order={{ order }}Time={{ Time }}&Type={{ Type }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for pg in income_list.paginator.page_range %}
+                {% if income_list.number == pg %}
+                    <li class="active"><a href="?page={{ pg }}&order={{ order }}&Time={{ Time }}&Type={{ Type }}">{{ pg }}</a></li>
+                {% else %}
+                    <li><a href="?page={{ pg }}&order={{ order }}&Time={{ Time }}&Type={{ Type }}">{{ pg }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if income_list.has_next %}
+            <li>
+              <a href="?page={{ income_list.next_page_number}}&order={{ order }}&Time={{ Time }}&Type={{ Type }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+
+    {% endif %}
+    {% if cost_list %}
+        <nav aria-label="Page navigation" class="text-center">
+          <ul class="pagination">
+            {% if cost_list.has_previous %}
+            <li>
+              <a href="?page={{ cost_list.previous_page_number }}&order={{ order }}Time={{ Time }}&Type={{ Type }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for pg in cost_list.paginator.page_range %}
+                {% if cost_list.number == pg %}
+                    <li class="active"><a href="?page={{ pg }}&order={{ order }}&Time={{ Time }}&Type={{ Type }}">{{ pg }}</a></li>
+                {% else %}
+                    <li><a href="?page={{ pg }}&order={{ order }}&Time={{ Time }}&Type={{ Type }}">{{ pg }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if cost_list.has_next %}
+            <li>
+              <a href="?page={{ cost_list.next_page_number}}&order={{ order }}&Time={{ Time }}&Type={{ Type }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+
+    {% endif %}
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/deleteTips.js'%}"></script>
+<script src="{% static 'js/getCurrentMeasures.js'%}"></script>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}种类管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/LogoColor.css' %}">
+{% endblock %}
+{% block functionClass5 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>品种管理</li>
+    <li class="active"><a href="{% url 'rawProductionMeasureInfo' %}">质量环节</a></li>
+{% endblock %}
+
+{% block addOrReturn %}
+    <a href="{% url 'rawProductionMeasureInfo' %}" style="float:right ">
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+        返回
+    </a>
+{% endblock %}
+{% block functionContent %}
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label for="rawProduction_current" class="col-sm-4 control-label">品种&nbsp;&nbsp;</label>
+            <div class="col-sm-2  text-center">
+                <select class="form-control" id="rawProduction_current" name="rawProduction_current" onchange="getCurrentRawProduction()">
+                {% if rawProductionInfo_list %}
+                    {% for rawProduction in rawProductionInfo_list %}
+                        <option value="{{ rawProduction.id }}" {% if rawProduction_current_id == rawProduction.id %}selected = "selected"{% endif %}>{{ rawProduction.rawProductionName }}</option>
+                    {% endfor %}
+                {% else %}
+                    <option value="">无</option>
+                {% endif %}
+                </select>
+            </div>
+        </div>
+    </form>
+    <hr style="position: absolute; top:80px; width: 100%">
+
+    {% if not rawProductionMeasure_list %}
+        <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center"  role="alert" style="margin-top: 30px;">暂时没有质量环节信息</div>
+    {% else %}
+        <div class="alert alert-success col-sm-offset-2 col-sm-6 text-center"  role="alert" style="margin-top: 30px;">请按照从上到下的顺序排列先后</div>
+        <form id="sort_form" method="post" href="{% url 'rawProductionMeasureSort' %}">
+            <div id="simple-list"   style="position: relative;top:20px;">
+                <ul id="measure_list" class="list-group text-center col-sm-6 col-sm-offset-2">
+                    {% for rawProductionMeasure in rawProductionMeasure_list %}
+                        <li class="list-group-item" id="{{ rawProductionMeasure.id }}">{{ rawProductionMeasure.qualityControlMeasure }}</li>
+                    {% endfor %}
+                </ul>
+                <div class="col-sm-12 " role="group" style="position: relative ;top:20px;padding-bottom: 20px;">
+                    <button type="button" class="btn btn-default" style="position:absolute;left: 35%;" onclick="giveValue()">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true" ></span>
+                    </button>
+                    <button type="button" class="btn btn-default" style="position:absolute;left: 45%; "
+                            onclick="refresh()">
+                        <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+
+            <input style="display: none" id="measureAmount" name="measureAmount" value="{{ measureAmount }}"/>
+            {% for rawProductionMeasure in rawProductionMeasure_list %}
+                <input style="display: none" class="sort_input" name="{{ forloop.counter }}" value="{{ rawProductionMeasure.id }}"/>
+            {% endfor %}
+            {% csrf_token %}
+        </form>
+    {% endif %}
+{% endblock %}
+{% block script %}
+    <script src="{% static 'js/deleteTips.js'%}"></script>
+    <script src="{% static 'js/Sortable.js' %}"></script>
+    <script src="{% static 'js/giveValue.js' %}"></script>
+    <script>
+    var el = document.getElementById('measure_list');
+    var sortable = Sortable.create(el,{
+        animation: 150,
+        ghostClass: 'blue-background-class'
+    });
+    </script>
+    <script>
+    function refresh() {
+        location.reload();
+    }
+    </script>
+    <script>
+    function getCurrentRawProduction(){
+       var production = document.getElementById("rawProduction_current");
+       var jumpURL = '?rawProduction_current=' + production.value;
+       window.location.href = jumpURL;}
+    </script>
+{% endblock %}

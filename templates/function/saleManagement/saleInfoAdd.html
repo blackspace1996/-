@@ -1,0 +1,118 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}销售{% endblock %}
+{% block css %}{% endblock %}
+{% block functionClass10 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>销售管理</li>
+    <li class="active"><a href="{% url 'sowingInfo' %}">销售信息</a></li>
+    <li class="active">销售信息添加</li>
+{% endblock %}
+{% block tips%}<span style="color:red">&lt本模块所有操作均记录操作者并同时检测数据库是否被非法篡改&gt</span>{% endblock %}
+{% block addOrReturn %}
+    <a href="{% url 'storeInfo' %}" style="float:right">
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+        返回
+    </a>
+{% endblock %}
+{% block functionContent %}
+    <form class="form-horizontal"  method="post" action="{% url 'saleInfoAdd' %}">
+        <div class="form-group">
+            <label for="saleName" class="col-sm-2 control-label">销售名称</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" name="saleName" placeholder="请为本次销售命名方便以后查找">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="saleTips" class="col-sm-2 control-label ">销售备注</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" name="saleTips" placeholder="请输入本次销售所需要备注的内容">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="amount" class="col-sm-2 control-label ">销售数量</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" name="amount" placeholder="请输入本次销售所销售的数量">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="unit" class="col-sm-2 control-label ">计量单位</label>
+            <div class="col-sm-3">
+              <input type="text" class="form-control" name="unit" value="{{ batch.unit }}" readonly>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="buyer" class="col-sm-2 control-label">购买方</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" name="buyer" placeholder="请输入本次销售的购买方名称">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="saleMember" class="col-sm-2 control-label">负责员工</label>
+            <div class="col-sm-3">
+                <select aria-label="saleMember" class="form-control" name="saleMember">
+                    {% for member in member_list %}
+                        <option value="{{ member.memberID }}">{{ member.memberName }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="saleTime" class="col-sm-2 control-label">销售时间</label>
+            <div class="col-sm-8">
+                <div class="col-sm-4 input-group date form_date" data-date="" data-date-format="yyyy-mm-dd" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                    <input type="text" name="saleTime" class="form-control" style="background-color: white" size="16"  value="" readonly>
+                    <span class="input-group-addon "><span class="glyphicon glyphicon-remove"></span></span>
+                    <span class="input-group-addon "><span class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+            </div>
+            <input type="hidden" id="dtp_input2" value="" /><br/>
+        </div>
+        {% if error.saleName %}
+            <div class="alert alert-danger col-md-offset-2 col-md-8 " role="alert">{{ error.saleName.0 }}</div>
+        {% endif %}
+        {% if error.buyer %}
+            <div class="alert alert-danger col-md-offset-2 col-md-8 " role="alert">{{ error.buyer.0 }}</div>
+        {% endif %}
+        {% if error.amount %}
+            <div class="alert alert-danger col-md-offset-2 col-md-8 " role="alert">{{ error.amount.0 }}</div>
+        {% endif %}
+        {% if error.saleTime %}
+            <div class="alert alert-danger col-md-offset-2 col-md-8 " role="alert">{{ error.saleTime.0 }}</div>
+        {% endif %}
+        {% if amountIllegal == 1 %}
+            <div class="alert alert-danger col-md-offset-2 col-md-8 " role="alert">销售数量应当大于0</div>
+        {% endif %}
+        {% if amountIllegal == 2 %}
+            <div class="alert alert-danger col-md-offset-2 col-md-8 " role="alert">销售数量不应当大于现有数量</div>
+        {% endif %}
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button type="submit" class="btn btn-default">确认添加</button>
+            </div>
+        </div>
+        <input style="display: none" name="batch_id" value="{{ batch.id }}" />
+        {% csrf_token %}
+    </form>
+
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" src="{% static 'datetimepicker/jquery/jquery-1.8.3.min.js' %}" charset="UTF-8"></script>
+    <script type="text/javascript" src="{% static 'datetimepicker/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'datetimepicker/js/bootstrap-datetimepicker.js' %}" charset="UTF-8"></script>
+    <script type="text/javascript" src="{% static 'datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js' %}" charset="UTF-8"></script>
+    <script type="text/javascript">
+        $('.dropdown-toggle').dropdown();
+        $('.form_date').datetimepicker({
+            language:  'zh-CN',
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 0,
+            endDate:new Date()
+        });
+    </script>
+{% endblock %}

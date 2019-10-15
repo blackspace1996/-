@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<!-- 感谢bootstrap4提供的模板 -->
+<html lang="zh">
+{% load staticfiles %}
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>{{ unity.unityName }}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'welcome/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="{% static 'welcome/dashboard.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href={% static 'css/ckeditor.css' %}>
+    <style type="text/css">/* Chart.js */
+    @-webkit-keyframes chartjs-render-animation {
+        from {
+            opacity: 0.99
+        }
+        to {
+            opacity: 1
+        }
+    }
+
+    @keyframes chartjs-render-animation {
+        from {
+            opacity: 0.99
+        }
+        to {
+            opacity: 1
+        }
+    }
+
+    .chartjs-render-monitor {
+        -webkit-animation: chartjs-render-animation 0.001s;
+        animation: chartjs-render-animation 0.001s;
+    }</style>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="{% url 'index' %}?unityID={{ unity.unityID }}">{{ unity.unityName }}</a>
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto" style="visibility: hidden">
+        </ul>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto font-weight-bold">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'list' %}?Type=News&unityID={{ unity.unityID }}">联盟动态</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'list' %}?Type=Regs&unityID={{ unity.unityID }}">规章制度</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'list' %}?Type=Company&unityID={{ unity.unityID }}">加盟公司</a>
+                </li>
+            </ul>
+            <a href="{% url 'login' %}">
+                <button class="btn btn-outline-info my-2 my-sm-0">企业登录</button>
+            </a>
+        </div>
+    </div>
+</nav>
+<img src="/static/img/{{ unity.unityName }}/bg.jpg"
+     style="position: fixed;width:100vw; height:100vh;z-index: -1"/>
+<div class="container bg-light">
+    <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light navbar-light border-right border-dark">
+            <div class="sidebar-sticky">
+                <ul class="navbar-nav" style="font-size:25px;font-weight: bold">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'list' %}?Type=News&unityID={{ unity.unityID }}">
+                            <i class="fa fa-envelope-open-o"></i>
+                            联盟动态
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'list' %}?Type=Regs&unityID={{ unity.unityID }}">
+                            <i class="fa fa-calendar-o"></i>
+                            规章制度
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'list' %}?Type=Company&unityID={{ unity.unityID }}">
+                            <i class="fa fa-group"></i>
+                            加盟公司 <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div class="chartjs-size-monitor"
+                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                <div class="chartjs-size-monitor-expand"
+                     style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                </div>
+                <div class="chartjs-size-monitor-shrink"
+                     style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                </div>
+            </div>
+            <h1 class="text-center">{{ currentNews.title }}</h1>
+            <div class="ck-content">{{ currentNews.description|safe }}</div>
+            <p style="display: block;text-align: right">发布时间：{{ currentNews.createTime|date:"Y-m-d" }}</p>
+            <p style="display: block;text-align: right">最后修改时间：{{ currentNews.updateTime|date:"Y-m-d H:i:s" }}</p>
+            <div class="text-center" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group mr-2 " role="group" aria-label="First group">
+                    {% if previousFlag %}
+                        <a class="btn btn-outline-secondary" style="text-decoration: none;"
+                           href="{% url 'NewsDetails' %}?id={{ previousFlag }}&unityID={{ unity.unityID }}" aria-label="Previous">
+                            <span aria-hidden="true">上一条</span>
+                        </a>
+                    {% endif %}
+                    {% if nextFlag %}
+                        <a class="btn btn-outline-secondary" href="{% url 'NewsDetails' %}?id={{ nextFlag }}&unityID={{ unity.unityID }}"
+                           style="text-decoration: none;" aria-label="Next">
+                            <span aria-hidden="true">下一条</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+
+
+</body>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+<script type="text/javascript">$('.dropdown-toggle').dropdown()</script>
+</html>

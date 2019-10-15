@@ -1,0 +1,316 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}查看任务{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/LogoColor.css' %}">
+{% endblock %}
+{% block functionClass4 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>任务管理</li>
+    <li class="active"><a href="{% url 'taskInfo' %}">任务信息</a></li>
+{% endblock %}
+
+{% block addOrReturn %}
+    {% if request.user.identityClass == 1 %}
+    <a href="{% url 'taskDistributing' %}" style="float:right">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        添加任务
+    </a>
+    {% elif request.user.identityClass == 2 %}
+        {% if taskType == 'Company' %}
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="filter-receiving" {% if receiving %}checked="checked"{% endif %} onclick="getReceivingTask()"> 只显示已领取的任务
+                </label>
+              </div>
+        {% elif taskType == 'Person' %}
+            <a href="{% url 'taskDistributing' %}" style="float:right">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                添加任务
+            </a>
+        {% endif %}
+    {% endif %}
+
+{% endblock %}
+{% block functionContent %}
+    {% if request.user.identityClass == 1 %}
+        {% if taskInfo_list %}
+            <table class="table table-bordered table-hover table-striped text-center">
+                <tr>
+                    <td>任务名称 </td>
+                    <td>所属联盟</td>
+                    <td>
+                        截止日期
+                        {% if order == 1 %}
+                            <a href="?order=2"><span class="glyphicon glyphicon-arrow-up small" aria-hidden="true"></span></a>
+                        {% else %}
+                            <a href="?order=1"><span class="glyphicon glyphicon-arrow-down small" aria-hidden="true"></span></a>
+                        {% endif %}
+                    </td>
+                    <td>编辑</td>
+                    <td>领取信息查看</td>
+                </tr>
+                {% for taskInfo in taskInfo_list %}
+                <tr>
+                    <td><a href="{% url 'taskInfoDetails' %}?id={{ taskInfo.id }}">{{ taskInfo.taskName}}</a></td>
+                    <td>{{ taskInfo.unityID.unityName }}</td>
+                    <td>{{ taskInfo.deadline|date:"Y-m-d" }}</td>
+                    <td>
+                        <a data-toggle="modal" data-target="#myModal" onclick="delID({{ taskInfo.id }})">删除 </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'taskReceivingInfo' %}?id={{ taskInfo.id }}">查看领取信息</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有任务信息</div>
+        {% endif %}
+    {% endif %}
+    {% if request.user.identityClass == 2 %}
+        <div id="passVar">
+            <input type="text" style="display: none" id="orderStore" value="{{ order }}" />
+            <input type="text" style="display: none" id="taskTypeStore" value="{{ taskType }}" />
+        </div>
+        <form class="form-horizontal">
+            <label for="taskType" class="col-sm-3 control-label ">任务分类</label>
+            <div class="form-group">
+                <div class="col-sm-5">
+                    <select class="form-control" id="taskType" name="taskType">
+                        <option value="Company" {% if taskType == 'Company' %}selected="selected"{% endif %}>公司任务</option>
+                        <option value="Person" {% if taskType == 'Person' %}selected="selected"{% endif %}>个体任务</option>
+                    </select>
+                </div>
+                <a onclick="task()" class="btn btn-default small">确认查看</a>
+            </div>
+        </form>
+            {% if taskType == 'Company' %}
+                {% if not receiving %}
+                    {% if taskInfo_list %}
+                        <table class="table table-bordered table-hover table-striped text-center">
+                            <tr>
+                                <td>任务名称 </td>
+                                <td>
+                                    截止日期
+                                    {% if order == 1 %}
+                                        <a href="?order=2&taskType={{ taskType }}&receiving={{ receiving }}"><span class="glyphicon glyphicon-arrow-up small" aria-hidden="true"></span></a>
+                                    {% else %}
+                                        <a href="?order=1&taskType={{ taskType }}&receiving={{ receiving }}"><span class="glyphicon glyphicon-arrow-down small" aria-hidden="true"></span></a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% for taskInfo in taskInfo_list %}
+                            <tr>
+                                <td><a href="{% url 'taskInfoDetails' %}?id={{ taskInfo.id }}">{{ taskInfo.taskName}}</a></td>
+                                <td>{{ taskInfo.deadline|date:"Y-m-d" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    {% else %}
+                        <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有任务信息</div>
+                    {% endif %}
+                {% else %}
+                    {% if taskInfo_filter_list %}
+                        <table class="table table-bordered table-hover table-striped text-center">
+                            <tr>
+                                <td>任务名称 </td>
+                                <td>
+                                    截止日期
+                                </td>
+                                <td>
+                                    领取日期
+                                </td>
+                            </tr>
+                            {% for taskInfo in taskInfo_filter_list %}
+                            <tr>
+                                <td><a href="{% url 'taskInfoDetails' %}?id={{ taskInfo.task.id }}">{{ taskInfo.task.taskName}}</a></td>
+                                <td>{{ taskInfo.task.deadline|date:"Y-m-d" }}</td>
+                                <td>{{ taskInfo.receivingTime|date:"Y-m-d" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    {% else %}
+                    <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">尚未领取任务</div>
+                {% endif %}
+                {% endif %}
+            {% elif taskType == 'Person' %}
+                {% if personTask_list %}
+                    <table class="table table-bordered table-hover table-striped text-center">
+                        <tr>
+                            <td>任务名称 </td>
+                            <td>隶属公司</td>
+                            <td>接受人/负责人</td>
+                            <td>是否已读</td>
+                            <td>
+                                截止日期
+                                {% if order == 1 %}
+                                    <a href="?order=2&taskType={{ taskType }}"><span class="glyphicon glyphicon-arrow-up small" aria-hidden="true"></span></a>
+                                {% else %}
+                                    <a href="?order=1&taskType={{ taskType }}"><span class="glyphicon glyphicon-arrow-down small" aria-hidden="true"></span></a>
+                                {% endif %}
+                            </td>
+                            <td>编辑</td>
+                        </tr>
+                        {% for taskInfo in personTask_list %}
+                        <tr>
+                            <td><a href="{% url 'taskInfoDetails' %}?id={{ taskInfo.id }}&isPerson=1">{{ taskInfo.taskName}}</a></td>
+                            <td>{{ taskInfo.company.companyName }}</td>
+                            <td>{{ taskInfo.receiver.holder }}</td>
+                            <td>
+                                {% if taskInfo.isRead %}
+                                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                {% else %}
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                {% endif %}
+                            </td>
+                            <td>{{ taskInfo.deadline|date:"Y-m-d" }}</td>
+                            <td><a data-toggle="modal" data-target="#myModal" onclick="delID({{ taskInfo.id }})">删除 </a></td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有任务信息</div>
+                {% endif %}
+            {% endif %}
+    {% endif %}
+    {% if request.user.identityClass == 3 %}
+        {% if taskInfo_list %}
+            <table class="table table-bordered table-hover table-striped text-center">
+                <tr>
+                    <td>任务名称 </td>
+                    <td>
+                        截止日期
+                        {% if order == 1 %}
+                            <a href="?order=2"><span class="glyphicon glyphicon-arrow-up small" aria-hidden="true"></span></a>
+                        {% else %}
+                            <a href="?order=1"><span class="glyphicon glyphicon-arrow-down small" aria-hidden="true"></span></a>
+                        {% endif %}
+                    </td>
+                    <td>是否已读</td>
+                </tr>
+                {% for taskInfo in taskInfo_list %}
+                <tr>
+                    <td><a href="{% url 'taskInfoDetails' %}?id={{ taskInfo.id }}&isPerson=1">{{ taskInfo.taskName}}</a></td>
+                    <td>{{ taskInfo.deadline|date:"Y-m-d" }}</td>
+                    <td>
+                        {% if taskInfo.isRead %}
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        {% else %}
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有任务信息</div>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+{% block pagination %}
+    {% if taskInfo_list %}
+        <nav aria-label="Page navigation" class="text-center">
+          <ul class="pagination">
+            {% if taskInfo_list.has_previous %}
+            <li>
+              <a href="?page={{ taskInfo_list.previous_page_number }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for pg in taskInfo_list.paginator.page_range %}
+                {% if taskInfo_list.number == pg %}
+                    <li class="active"><a href="?page={{ pg }}&order={{ order }}{% if receiving %}&receiving={{ receiving }}{% endif %}{% if taskType %}&taskType={{ taskType }}{% endif %}">{{ pg }}</a></li>
+                {% else %}
+                    <li><a href="?page={{ pg }}&order={{ order }}{% if receiving %}&receiving={{ receiving }}{% endif %}{% if taskType %}&taskType={{ taskType }}{% endif %}">{{ pg }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if taskInfo_list.has_next %}
+            <li>
+              <a href="?page={{ taskInfo_list.next_page_number}}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+    {% endif %}
+    {% if personTask_list %}
+        <nav aria-label="Page navigation" class="text-center">
+          <ul class="pagination">
+            {% if personTask_list.has_previous %}
+            <li>
+              <a href="?page={{ personTask_list.previous_page_number }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for pg in personTask_list.paginator.page_range %}
+                {% if personTask_list.number == pg %}
+                    <li class="active"><a href="?page={{ pg }}&order={{ order }}{% if receiving %}&receiving={{ receiving }}{% endif %}{% if taskType %}&taskType={{ taskType }}{% endif %}">{{ pg }}</a></li>
+                {% else %}
+                    <li><a href="?page={{ pg }}&order={{ order }}{% if receiving %}&receiving={{ receiving }}{% endif %}{% if taskType %}&taskType={{ taskType }}{% endif %}">{{ pg }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if personTask_list.has_next %}
+            <li>
+              <a href="?page={{ personTask_list.next_page_number}}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+    {% endif %}
+    {% if taskInfo_filter_list %}
+        <nav aria-label="Page navigation" class="text-center">
+          <ul class="pagination">
+            {% if taskInfo_filter_list.has_previous %}
+            <li>
+              <a href="?page={{ taskInfo_filter_list.previous_page_number }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for pg in taskInfo_filter_list.paginator.page_range %}
+                {% if taskInfo_filter_list.number == pg %}
+                    <li class="active"><a href="?page={{ pg }}&order={{ order }}{% if receiving %}&receiving={{ receiving }}{% endif %}{% if taskType %}&taskType={{ taskType }}{% endif %}">{{ pg }}</a></li>
+                {% else %}
+                    <li><a href="?page={{ pg }}&order={{ order }}{% if receiving %}&receiving={{ receiving }}{% endif %}{% if taskType %}&taskType={{ taskType }}{% endif %}">{{ pg }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if taskInfo_filter_list.has_next %}
+            <li>
+              <a href="?page={{ taskInfo_filter_list.next_page_number}}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+    {% endif %}
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">提示信息</h4>
+          </div>
+          <div class="modal-body">
+            确认删除?
+          </div>
+          <div class="modal-footer">
+            <input type="hidden" id="delete_id"/>
+            <input type="hidden" id="url_root" value="{% url 'taskInfoDelete' %}"/>
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            <a onclick="urlSubmit_delete()" class="btn btn-primary">确认</a>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/deleteTips.js'%}"></script>
+<script src="{% static 'js/Task.js' %}"></script>
+{% endblock %}

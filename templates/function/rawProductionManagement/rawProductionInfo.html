@@ -1,0 +1,181 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}种类管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/LogoColor.css' %}">
+{% endblock %}
+{% block functionClass5 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>品种管理</li>
+    <li class="active"><a href="{% url 'rawProductionInfo' %}">种类管理</a></li>
+{% endblock %}
+
+{% block addOrReturn %}
+    {% if request.user.identityClass == 2 %}
+    <a href="{% url 'rawProductionInfoAdd' %}" style="float:right">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        添加
+    </a>
+    {% endif %}
+{% endblock %}
+{% block functionContent %}
+    {% if request.user.identityClass == 1 %}
+        <form method="post" class="form-horizontal" >
+            <label for="company" class="col-sm-3 control-label ">公司名称</label>
+            <div class="form-group">
+                <div class="col-sm-5">
+                    <select class="form-control" id="company_query" name="company_query">
+                        {% for company in companyInfo_list %}
+                            <option value="{{ company.companyID }}" {% if selected_id == company.companyID %}selected = "selected"{% endif %}>{{ company.companyName }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <a onclick="getCurrentCompany()" class="btn btn-default small">确认查看</a>
+            </div>
+            {% csrf_token %}
+        </form>
+        {% if rawProduction_list %}
+            <table class="table table-bordered table-hover table-striped text-center">
+                <tr>
+                    <td>品种名称</td>
+                    <td>公司名称</td>
+                    <td>备注</td>
+                </tr>
+            {% for rawProduction in rawProduction_list %}
+                <tr>
+                    <td>{{ rawProduction.rawProductionName }}</td>
+                    <td>{{ rawProduction.company.companyName }}</td>
+                    <td style="word-wrap:break-word;word-break:break-all;" width="30%">{{ rawProduction.description }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+        {% endif %}
+        {% if not rawProduction_list %}
+            <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有品种信息</div>
+        {% endif %}
+    {% endif  %}
+    {% if request.user.identityClass == 2 %}
+        <form method="post" class="form-horizontal" >
+            <label for="company" class="col-sm-3 control-label ">公司名称</label>
+            <div class="form-group">
+                <div class="col-sm-5">
+                    <select class="form-control" id="company_query" name="company_query">
+                        {% if companyInfo_list %}
+                            {% for company in companyInfo_list %}
+                                <option value="{{ company.companyID }}" {% if selected_id == company.companyID %}selected = "selected"{% endif %}>{{ company.companyName }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option>请添加公司信息</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <a onclick="getCurrentCompany()" class="btn btn-default small">确认查看</a>
+            </div>
+            {% csrf_token %}
+        </form>
+        {% if rawProduction_list_get %}
+            <table class="table table-bordered table-hover table-striped text-center">
+                <tr>
+                    <td>品种名称</td>
+                    <td>隶属公司</td>
+                    <td>备注</td>
+                    {% if company_current == request.user.company.companyID %}
+                        <td>
+                            编辑
+                        </td>
+                    {% endif %}
+                </tr>
+            {% for rawProduction in rawProduction_list %}
+                <tr>
+                    <td>{{ rawProduction.rawProductionName }}</td>
+                    <td>{{ rawProduction.company.companyName }}</td>
+                    <td style="word-wrap:break-word;word-break:break-all;" width="30%">{{ rawProduction.description }}</td>
+                    {% if company_current == request.user.company.companyID %}
+                        <td>
+                            <a href="{% url 'rawProductionInfoUpdate' %}?id={{ rawProduction.id }}">修改  </a>
+                            <a data-toggle="modal" data-target="#myModal" onclick="delID({{ rawProduction.id }})">删除</a>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </table>
+        {% endif %}
+        {% if not rawProduction_list %}
+            <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有品种信息</div>
+        {% endif %}
+    {% endif  %}
+    {% if request.user.identityClass == 3 %}
+        {% if rawProduction_list_get %}
+            <table class="table table-bordered table-hover table-striped text-center">
+                <tr>
+                    <td>品种名称</td>
+                    <td>隶属公司</td>
+                    <td>备注</td>
+                </tr>
+            {% for rawProduction in rawProduction_list %}
+                <tr>
+                    <td>{{ rawProduction.rawProductionName }}</td>
+                    <td>{{ rawProduction.company.companyName }}</td>
+                    <td style="word-wrap:break-word;word-break:break-all;" width="30%">{{ rawProduction.description }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+        {% endif %}
+        {% if not rawProduction_list %}
+            <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有品种信息</div>
+        {% endif %}
+    {% endif  %}
+{% endblock %}
+{% block pagination %}
+    {% if rawProduction_list %}
+        <nav aria-label="Page navigation" class="text-center">
+          <ul class="pagination">
+            {% if rawProduction_list.has_previous %}
+            <li>
+              <a href="?page={{ rawProduction_list.previous_page_number }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for pg in rawProduction_list.paginator.page_range %}
+                {% if rawProduction_list.number == pg %}
+                    <li class="active"><a href="?page={{ pg }}&order={{ order }}">{{ pg }}</a></li>
+                {% else %}
+                    <li><a href="?page={{ pg }}&order={{ order }}">{{ pg }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if rawProduction_list.has_next %}
+            <li>
+              <a href="?page={{ rawProduction_list.next_page_number}}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">提示信息</h4>
+              </div>
+              <div class="modal-body">
+                确认删除?
+              </div>
+              <div class="modal-footer">
+                <input type="hidden" id="delete_id"/>
+                <input type="hidden" id="url_root" value="{% url 'rawProductionInfoDelete' %}"/>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <a onclick="urlSubmit()" class="btn btn-primary">确认</a>
+              </div>
+            </div>
+          </div>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/deleteTips.js'%}"></script>
+<script src="{% static 'js/getCurrentCompany.js'%}"></script>
+{% endblock %}

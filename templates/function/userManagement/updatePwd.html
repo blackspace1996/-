@@ -1,0 +1,45 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}修改密码{% endblock %}
+{% block css %}{% endblock %}
+{% block functionClass3 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>账号管理</li>
+    <li class="active"><a href="{% url 'updatePwd' %}"></a>修改密码</li>
+{% endblock %}
+{% block addOrReturn %}
+{% endblock %}
+{% block functionContent %}
+<form class="form-horizontal" method="post" action="{% url 'updatePwd'%}">
+    <div class="form-group">
+        <label for="rawPwd" class="col-sm-4 control-label">原密码</label>
+        <div class="col-sm-6">
+          <input type="password" class="form-control" id="rawPwd" name="rawPwd" placeholder="请输入原本的密码">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="newPwd" class="col-sm-4 control-label">新密码</label>
+        <div class="col-sm-6">
+          <input type="password" class="form-control" id="newPwd" name="newPwd" placeholder="请输入新的密码">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="newPwd_repeat" class="col-sm-4 control-label">再次输入新密码</label>
+        <div class="col-sm-6">
+          <input type="password" class="form-control" id="newPwd_repeat" name="rawPwd_repeat" placeholder="请再次输入新的密码">
+        </div>
+        <div id="pwd_tip" style="vertical-align: middle;padding-top:7px;margin-top:0;margin-bottom:0 "></div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-6 col-sm-6">
+          <button type="submit" id="update" class="btn btn-default">确认修改</button>
+        </div>
+    </div>
+{% csrf_token %}
+</form>
+    {% if error %}
+        <div class="alert alert-danger col-md-offset-4 col-md-6" role="alert">请正确输入当前密码</div>
+    {% endif %}
+{% endblock %}
+{% block script %}
+{% endblock %}

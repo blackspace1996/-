@@ -1,0 +1,91 @@
+header{
+    height: 8vh;
+    overflow: hidden;
+}
+aside{
+    position: absolute;
+    top:8vh;
+    width: 10vw;
+    border-width: 1px 1px 1px 0;
+    border-style: solid;
+    border-color: rgba(190, 190, 190, 0.5);
+    border-radius: 5px;
+}
+#main-left-nav{
+    position: relative;
+    height: 90vh;
+}
+aside ul li a{
+    height: 48px;
+    line-height: 24px;
+    color: #636e77;
+    font-size:16px;
+}
+
+aside ul li a:hover:before{
+    content:"";
+    position: absolute;
+    height: 0;
+    top:0;
+    width: 0;
+    left:0;
+    border-left:25px solid rgb(145, 154, 212);
+    border-right: none ;
+    border-bottom: 24px solid transparent;
+    border-top: 24px solid transparent;
+}
+
+aside ul li a:hover{
+    color: rgb(145, 154, 212);
+}
+
+.subAside{
+    position:absolute;
+    top:0;
+    left: 10vw;
+    width: 10vw;
+    background-color: #ffffff;
+    z-index:100;
+    border-width: 1px 1px 1px 0;
+    border-style: solid;
+    border-color: rgb(228, 228, 228);
+    border-radius: 5px;
+    display: none;
+}
+.subAsideLink{
+    position:relative;
+    display:block;
+    width: 100%;
+    text-decoration: none;
+    height: 48px;
+    color: #636e77;
+    text-align: center;
+    font-size:16px;
+    line-height: 48px;
+}
+.subAsideLink:hover{
+    text-decoration: none;
+    background-color: #e2e2e2;
+}
+.subAsideLinkActive{
+    background-color: #e2e2e2;
+}
+#functionContent{
+    position: absolute;
+    top:8vh;
+    left:12vw;
+    width: 86vw;
+    height: 90vh;
+    background-color: #fbfbfb;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(190, 190, 190, 0.5);
+    border-radius: 5px;
+}
+main div ol li a{
+    text-decoration: none;
+}
+
+main div ol{
+    z-index:999;
+}

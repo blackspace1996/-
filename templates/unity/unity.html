@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<!-- 感谢bootstrap4提供的模板 -->
+<html lang="zh"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>质量可追溯生产管理系统</title>
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'welcome/bootstrap.min.css'%}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="{% static 'welcome/jumbotron.css' %}" rel="stylesheet">
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <a class="navbar-brand" href="{% url 'index' %}">质量可追溯生产管理系统</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto" style="visibility: hidden">
+          <li class="nav-item active">
+            <a class="nav-link" href="https://v4.bootcss.com/docs/4.0/examples/jumbotron/#">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://v4.bootcss.com/docs/4.0/examples/jumbotron/#">Link</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="https://v4.bootcss.com/docs/4.0/examples/jumbotron/#">Disabled</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="http://example.com/" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+              <a class="dropdown-item" href="https://v4.bootcss.com/docs/4.0/examples/jumbotron/#">Action</a>
+              <a class="dropdown-item" href="https://v4.bootcss.com/docs/4.0/examples/jumbotron/#">Another action</a>
+              <a class="dropdown-item" href="https://v4.bootcss.com/docs/4.0/examples/jumbotron/#">Something else here</a>
+            </div>
+          </li>
+        </ul>
+        <a href="{% url 'login' %}"><button class="btn btn-outline-info my-2 my-sm-0">企业登录</button></a>
+      </div>
+    </nav>
+    <img src="/static/img/{{ unity.unityName }}/bg.jpg" style="position: fixed;width:100vw; height:100vh;z-index: -1" />
+    <main role="main">
+
+      <!-- Main jumbotron for a primary marketing message or call to action -->
+      <div class="jumbotron" style="background-color: transparent; height: 56vh">
+        <div class="container">
+          <h1 class="display-3" style="color: white">{{ unity.unityName }}</h1>
+        </div>
+      </div>
+
+      <div class="container">
+        <!-- Example row of columns -->
+        <div class="row">
+          <div class="col-md-4">
+            <h2 style="color:whitesmoke;">联盟动态</h2>
+            <p style="color:whitesmoke;">本联盟近期动态一览</p>
+            <p><a class="btn btn-outline-light" href="{% url 'list' %}?Type=News&unityID={{ unity.unityID }}" style="color: whitesmoke"  role="button">详情 »</a></p>
+          </div>
+          <div class="col-md-4">
+            <h2 style="color:whitesmoke;">规章制度</h2>
+            <p style="color:whitesmoke;">本联盟所采用的规章制度</p>
+            <p><a class="btn btn-outline-light" href="{% url 'list' %}?Type=Regs&unityID={{ unity.unityID }}" style="color: whitesmoke" role="button">详情 »</a></p>
+          </div>
+          <div class="col-md-4">
+            <h2 style="color:whitesmoke;">加盟公司</h2>
+            <p style="color:whitesmoke;">现已达成合作的公司</p>
+            <p><a class="btn btn-outline-light" style="color: whitesmoke" href="{% url 'list' %}?Type=Company&unityID={{ unity.unityID }}"  role="button">详情 »</a></p>
+          </div>
+        </div>
+
+      </div> <!-- /container -->
+
+    </main>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+
+</body></html>
+
+<style type="text/css">
+    .btn-outline-light:hover{
+        background-color: gray;
+    }
+</style>

@@ -1,0 +1,111 @@
+body{
+    padding: 0;
+    margin:0;
+    overflow: hidden;
+}
+.titleWord{
+    position:absolute;
+    font-family: 新楷体;
+    font-size:24px;
+    color: #000000;
+    margin-top:2px;
+    margin-bottom:2px;
+    margin-left:15px;
+}
+
+.iconContent{
+    overflow: hidden;
+    background-color: #ececec;
+    height: 35px;
+    width: 35px;
+    border-radius: 6px;
+}
+
+.detailLink{
+    position:absolute;
+    right:0;
+    font-size: 18px;
+    line-height: 24px;
+    margin-top: 5px;
+    margin-right: 10px;
+    text-decoration: none;
+    color: black;
+}
+
+#loginButton{
+    text-decoration: none;
+    display:inline-block;
+    border-radius: 10px;
+    border-style: solid;
+    border-color:#e4e4e4;
+    border-width: 2px;
+    text-align: center;
+    line-height: 30px;
+    background-color: rgb(221, 221, 221);
+    color: #575757;
+    font-size:18px;
+    font-weight: bold;
+    width:120px;
+    height:30px;
+    position:absolute;
+    right:15px;
+    top:27px;
+}
+#loginButton:hover{
+    background-color: #64a1ff;
+    color: #f5f5f5;
+}
+
+
+#sysNewsContent{
+    float:left;
+    margin-bottom:10px;
+    position:relative;
+    height: 370px;
+    width: 49vw;
+    left: 5vw;
+    right: 32vw;
+    background-color: white;
+    opacity: 0.8;
+}
+
+#sysNewsList{
+    position:relative;
+    top:32px;
+    width: 49vw;
+}
+
+#companyContent{
+    position: absolute;
+    top:480px;
+    margin-bottom:20px;
+    height: 200px;
+    width: 49vw;
+    left: 5vw;
+    right: 32vw;
+    background-color: white;
+    opacity: 0.8;
+}
+
+#companyDesLine{
+    position:relative;
+    top:32px;
+    width: 49vw;
+}
+
+#sysRegulations{
+    margin-bottom:3vh;
+    position: relative;
+    height: 584px;
+    width: 40vw;
+    left: 55vw;
+    right: 32vw;
+    background-color: white;
+    opacity: 0.8;
+}
+
+#sysRegList{
+    position:relative;
+    top:32px;
+    width: 100%;
+}

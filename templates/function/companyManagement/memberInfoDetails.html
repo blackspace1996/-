@@ -1,0 +1,48 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}员工信息{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/table_tr.css'%}">
+{% endblock %}
+{% block functionClass2 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>机构管理</li>
+    <li class="active"><a href="{% url 'memberInfo' %}">员工信息</a></li>
+    <li>员工详细信息</li>
+{% endblock %}
+{% block addOrReturn %}
+    <a href="{% url 'memberInfo' %}" style="float:right ">
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+        返回
+    </a>
+{% endblock %}
+{% block functionContent %}
+    <div class="col-lg-offset-1 col-lg-10">
+        <table class="table-bordered table-hover text-center" style="width: 100%">
+            <tr class="tr1">
+                <td>员工名称</td>
+                <td>{{ currentInfo.memberName }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>隶属公司</td>
+                <td>{{ currentInfo.companyName.companyName }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>职位</td>
+                <td>{{ currentInfo.position }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>联系方式</td>
+                <td>{{ currentInfo.telephone }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>受雇日期</td>
+                <td>{{ currentInfo.hireDate }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>最后修改时间</td>
+                <td>{{ currentInfo.updateDate }}</td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

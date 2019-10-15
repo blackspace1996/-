@@ -1,0 +1,36 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}任务管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/table_tr.css'%}">
+{% endblock %}
+{% block functionClass4 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>任务管理</li>
+    <li class="active"><a href="{% url 'taskInfo' %}">任务信息</a></li>
+    <li class="active">任务领取信息</li>
+{% endblock %}
+{% block addOrReturn %}
+    <a href="{% url 'taskInfo' %}" style="float:right ">
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+        返回
+    </a>
+{% endblock %}
+{% block functionContent %}
+    <div class="col-lg-offset-1 col-lg-10">
+        <table class="table-bordered table-hover text-center" style="width: 100%">
+            <tr class="tr1">
+                <td>任务名称</td>
+                <td>领取人</td>
+                <td>领取日期</td>
+            </tr>
+            {% for currentInfo in currentInfo_list %}
+                <tr class="tr1">
+                    <td>{{ currentInfo.task.taskName }}</td>
+                    <td>{{ currentInfo.receiver.companyName }}</td>
+                    <td>{{ currentInfo.receivingTime     }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}投入品管理{% endblock %}
+{% block css %}
+    <link href="{% static 'datetimepicker/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'datetimepicker/bootstrap/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="{% static 'css/LogoColor.css' %}">
+    <link rel="stylesheet" href="{% static 'css/table_tr.css'%}">
+{% endblock %}
+{% block functionClass7 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>投入品管理</li>
+    <li class="active"><a href="{% url 'itemCost' %}">投入品种类</a></li>
+    <li>投入品详细信息</li>
+{% endblock %}
+{% block tips%}<span style="color:red">&lt本模块所有操作均记录操作者并同时检测数据库是否被非法篡改&gt</span>{% endblock %}
+{% block addOrReturn %}
+    {% if flag %}
+        <a href="{% url 'itemCostQuery' %}?id={{ batch_id }}" style="float:right">
+            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+            返回
+        </a>
+    {% else %}
+        <a href="{% url 'itemCost' %}" style="float:right">
+            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+            返回
+        </a>
+    {% endif %}
+{% endblock %}
+{% block functionContent %}
+    <div class="col-lg-offset-1 col-lg-10">
+        <table class="table-bordered table-hover text-center" style="width: 100%">
+            <tr class="tr1">
+                <td>农产品种类</td>
+                <td>{{ cost.item.itemName }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>使用备注</td>
+                <td>{{ cost.costDescription }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>使用批次</td>
+                <td>{{ cost.costBatch.sowingName }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>负责人</td>
+                <td>{{ cost.member.memberName }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>记录人</td>
+                <td>{{ cost.recorder.holder }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>使用日期</td>
+                <td>{{ cost.date}}</td>
+            </tr>
+        </table>
+    </div>
+
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" src="{% static 'datetimepicker/jquery/jquery-1.8.3.min.js' %}" charset="UTF-8"></script>
+    <script type="text/javascript" src="{% static 'datetimepicker/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'datetimepicker/js/bootstrap-datetimepicker.js' %}" charset="UTF-8"></script>
+    <script type="text/javascript" src="{% static 'datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js' %}" charset="UTF-8"></script>
+    <script type="text/javascript" src="{% static 'js/shareSwitch.js' %}"></script>
+{% endblock %}

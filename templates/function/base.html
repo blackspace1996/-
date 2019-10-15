@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <title>{% block title %}欢迎界面{% endblock %}</title>
+    <link href="{% static 'datetimepicker/bootstrap/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="{% static 'css/dropmenu_redefined.css' %}">
+    <link rel="stylesheet" href="/static/css/font-awesome-4.7.0/css/font-awesome.min.css">
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/css/bootstrap.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link rel="stylesheet" href={% static 'css/ckeditor.css' %}>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <nav role="navigation" class="navbar navbar-default" style="background-color: #3a87ad">
+            <div class="navbar-header">
+                <button data-target="#bs-example-navbar-collapse-1" data-toggle="collapse" class="navbar-toggle" type="button">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="{% url 'userWelcome' %}" class="navbar-brand" style="font-weight: bolder;color: white">质量可追溯生产管理系统</a>
+            </div>
+            <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li></li>
+                    <li><a class="fa fa-user" href="#" style="font-size: medium;color: white"><span id="identityText">
+                        {% if request.user.identityClass == 0 %}
+                            网站维护员
+                        {% elif request.user.identityClass == 1 %}
+                            联盟管理员
+                        {% elif request.user.identityClass == 2 %}
+                            系统操作员
+                        {% else %}
+                            操作员
+                        {% endif %}
+                    </span></a></li>
+                    <li><a class="fa fa-group" href="#" style="font-size: medium;color: white"><span id="holderText">
+                        {% if request.user.company %}
+                            {{ request.user.company.companyName }}
+                        {% else %}
+                            无
+                        {% endif %}
+                    </span></a></li>
+                    <li><a class="fa fa-user-plus" href="#" style="font-size: medium;color: white"><span id="userName">{{ request.user.holder }}</span></a></li>
+                    <li><a id="logout" class="fa fa-power-off" href="{% url 'logout' %}" style="font-size: medium;color: white"> 退出 </a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <aside>
+        <ul id="main-left-nav" class="nav text-center">
+         <li role="presentation" class="{% block functionClass3 %}{% endblock %}">
+              <a class="fa fa-user-plus" href="#" style="line-height:35px;font-size: 22px"> 账号管理</a>
+              <div class="subAside">
+                    <a class="subAsideLink fa fa-vcard-o" href="{% url 'userList' %}"> 已有账号</a>
+                    <a class="subAsideLink fa fa-mail-reply" href="{% url 'distributeUser' %}"> 分发账号</a>
+                    <a class="subAsideLink fa fa-pencil-square-o" href="{% url 'updatePwd' %}"> 修改密码</a>
+              </div>
+          </li>
+        {% if request.user.identityClass == 0 %}
+         <li role="presentation" class="{% block functionClass0 %}{% endblock %}">
+              <a class="fa fa-book" href="#" style="line-height:35px;font-size: 22px"> 联盟管理</a>
+              <div class="subAside">
+                    <a class="subAsideLink fa fa-comment-o" href="{% url 'unityInfo' %}"> 联盟信息</a>
+                    <a class="subAsideLink fa fa-comment-o" href="{% url 'unityInfoAdd' %}"> 创建联盟</a>
+              </div>
+         </li>
+        <li role="presentation" class="{% block functionClass11 %}{% endblock %}">
+              <a class="fa fa-server" href="#" style="line-height:35px;font-size: 22px">日志记录</a>
+                <div class="subAside">
+                    <a class="subAsideLink fa fa-wrench" href="{% url 'logInfo' %}"> 查看日志</a>
+                </div>
+          </li>
+        {% else %}
+          <li role="presentation" class="{% block functionClass1 %}{% endblock %}">
+              <a class="fa fa-book" href="#" style="line-height:35px;font-size: 22px"> 信息展示</a>
+              <div class="subAside">
+                    <a class="subAsideLink fa fa-comment-o" href="{% url 'systemNews' %}"> 联盟动态</a>
+                    <a class="subAsideLink fa fa-file-o" href="{% url 'systemRegs' %}"> 规章制度</a>
+              </div>
+          </li>
+          <li role="presentation" class="{% block functionClass2 %}{% endblock %}">
+              <a class="fa fa-handshake-o" href="#" style="line-height:35px;font-size: 22px"> 机构管理</a>
+              <div class="subAside">
+                    <a class="subAsideLink fa fa-institution" href="{% url 'companyInfo' %}"> 单位信息</a>
+                    <a class="subAsideLink fa fa-vcard-o" href="{% url 'memberInfo' %}"> 员工信息</a>
+                    <a class="subAsideLink fa fa-automobile" href="{% url 'equipmentInfo' %}"> 设备信息</a>
+                    <a class="subAsideLink fa fa-map-marker" href="{% url 'blockInfo' %}"> 地块信息</a>
+                    <a class="subAsideLink fa fa-gears" href="{% url 'equipmentShareInfo' %}"> 设备共享</a>
+              </div>
+          </li>
+          <li role="presentation" class="{% block functionClass4 %}{% endblock %}">
+              <a class="fa fa-calendar-check-o" href="#" style="line-height:35px;font-size: 22px"> 任务管理</a>
+              <div class="subAside">
+                    <a class="subAsideLink fa fa-envelope-open-o" href="{% url 'taskInfo' %}"> 查看任务</a>
+                    <a class="subAsideLink fa fa-cloud-upload" href="{% url 'taskDistributing' %}"> 发布任务</a>
+              </div>
+          </li>
+          <li role="presentation" class="{% block functionClass5 %}{% endblock %}">
+              <a class="fa fa-object-ungroup" href="#" style="line-height:35px;font-size: 22px"> 品种管理</a>
+              <div class="subAside">
+                    <a class="subAsideLink fa fa-tree" href="{% url 'rawProductionInfo' %}"> 种类管理</a>
+                    <a class="subAsideLink fa fa-shield" href="{% url 'rawProductionMeasureInfo' %}"> 质量环节</a>
+              </div>
+          </li>
+          <li role="presentation" class="{% block functionClass6 %}{% endblock %}">
+              <a class="fa fa-calendar-o" href="#" style="line-height:35px;font-size: 22px"> 生产管理</a>
+              <div class="subAside">
+                    <a class="subAsideLink fa fa-hand-stop-o" href="{% url 'sowingInfo' %}"> 播种管理</a>
+                    <a class="subAsideLink fa fa-hand-rock-o" href="{% url 'harvestInfo' %}"> 收获管理</a>
+              </div>
+          </li>
+          <li role="presentation" class="{% block functionClass7 %}{% endblock %}">
+              <a class="fa fa-filter"  style="line-height:35px;font-size: 22px" href="#"> 投入品管理</a>
+                <div class="subAside">
+                    <a class="subAsideLink fa fa-map-o" href="{% url 'itemInfo' %}"> 种类管理</a>
+                    <a class="subAsideLink fa fa-share" href="{% url 'itemCost' %}"> 投入品使用</a>
+                </div>
+          </li>
+          <li role="presentation" class="{% block functionClass8 %}{% endblock %}">
+              <a class="fa fa-server" style="line-height:35px;font-size: 22px" href="#"> 产品库存管理</a>
+                <div class="subAside">
+                    <a class="subAsideLink fa fa-database" href="{% url 'storeInfo' %}"> 库存查询</a>
+                </div>
+          </li>
+          <li role="presentation" class="{% block functionClass9 %}{% endblock %}">
+              <a class="fa fa-rmb" style="line-height:35px;font-size: 22px"  href="#"> 收支管理</a>
+                <div class="subAside">
+                    <a class="subAsideLink fa fa-check-square-o" href="{% url 'costManagementInfo' %}"> 成本记录</a>
+                </div>
+          </li>
+          <li role="presentation" class="{% block functionClass10%}{% endblock %}">
+              <a class="fa fa-suitcase" href="#" style="line-height:35px;font-size: 22px"> 销售管理</a>
+                <div class="subAside">
+                    <a class="subAsideLink fa fa-check" href="{% url 'saleInfo' %}"> 销售记录</a>
+                    <a class="subAsideLink fa fa-recycle" href="{% url 'retrospectInfo' %}"> 产品追溯</a>
+                </div>
+          </li>
+        {% endif %}
+        </ul>
+
+    </aside>
+    <main>
+        <div id="functionContent"  style="max-height: 2000px;overflow-y: scroll; ">
+            <ol class="breadcrumb">
+                {% block pathNav %}
+                    <li class="active">欢迎界面</li>
+                {% endblock %}
+                {% block tips %}{% endblock %}
+                {% block addOrReturn %}{% endblock %}
+            </ol>
+        {% block functionContent %}
+            <h1 style="position: relative;top:100px;" align="center">欢迎回来,<small>{{ request.user.holder }}</small></h1>
+            <h4 style="position: relative;top:150px;" align="center">
+                {% if request.user.identityClass == 1 %}
+                    当前时间为{{ time_now }}
+                {% elif request.user.identityClass == 2 %}
+                    当前时间为{{ time_now }}
+                {% else %}
+                    当前未读任务数 : {{ taskNumber }}
+                {% endif %}
+            </h4>
+            <h4 style="position: relative;top:200px;" align="center">选择左侧功能以使用系统</h4>
+        {% endblock %}
+        {% block pagination %}{% endblock %}
+        </div>
+
+    </main>
+    <footer></footer>
+</body>
+<script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="{% static 'js/base.js' %}"></script>
+{% block script %}{% endblock %}
+</html>

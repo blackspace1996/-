@@ -1,0 +1,89 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}生产管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/LogoColor.css' %}">
+{% endblock %}
+{% block functionClass6 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>生产管理</li>
+    <li class="active"><a href="{% url 'measuresConfirming' %}">质量环节</a></li>
+{% endblock %}
+{% block tips%}<span style="color:red">&lt本模块所有操作均记录操作者并同时检测数据库是否被非法篡改&gt</span>{% endblock %}
+
+{% block addOrReturn %}
+    <a href="{% url 'sowingInfo' %}" style="float:right">
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+        返回
+    </a>
+{% endblock %}
+{% block functionContent %}
+    <div>
+        <table class="text-center table table-hover col-sm-7" >
+        <tr>
+            <td valign="middle">阶段</td>
+            <td valign="middle">环节名称</td>
+            <td valign="middle">是否检查确认</td>
+            <td valign="middle">数据状况</td>
+            <td valign="middle">更多</td>
+        </tr>
+        {% for measure in measure_list%}
+            <tr>
+                <td class="col-sm-1" style="font-weight:bolder;" valign="middle">{{ forloop.counter }}</td>
+                <td class="col-sm-1" style="font-weight:bolder;" valign="middle">{{ measure.measure.qualityControlMeasure }}</td>
+                <td class="col-sm-1" valign="middle">
+                    {% if not measure.isConfirming %}
+                        {% if current_measure == measure.measure.orderNumber %}
+                            <a href="{% url 'measureConfirmingComplete' %}?id={{ measure.id }}" style="font-weight: bolder;">前往确认</a>
+                        {% else %}
+                            <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                        {% endif %}
+                    {% else %}
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                    {% endif %}
+                </td>
+                <td class="col-sm-1">
+                    {% if not measure.isConfirming %}
+                        -
+                    {% else %}
+                        {% if measure.isNormal %}
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        {% else %}
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td class="col-sm-1">
+                    {% if not measure.isConfirming %}
+                        -
+                    {% else %}
+                        <a href="{% url 'measureConfirmingDetails' %}?id={{ measure.id }}" style="font-weight: bolder;">详情</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        {% if not request.user.identityClass == 1 %}
+            {% if harvestFlag %}
+                <tr>
+                    <td class="col-sm-1"></td>
+                    <td class="col-sm-1"></td>
+                    <td class="col-sm-1">
+                        {% if not current_batch.isHarvest %}
+                            <a href="{% url 'harvestInfoAdd' %}?id={{ current_batch.id }}" class="btn btn-default">前往收获</a>
+                        {% else %}
+                            <button class="btn btn-success">已收获</button>
+                        {% endif %}
+                    </td>
+                    <td class="col-sm-1"></td>
+                    <td class="col-sm-1"></td>
+                </tr>
+            {% endif %}
+        {% endif %}
+    </table>
+
+    </div>
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/deleteTips.js'%}"></script>
+<script src="{% static 'js/getCurrentCompany.js'%}"></script>
+{% endblock %}

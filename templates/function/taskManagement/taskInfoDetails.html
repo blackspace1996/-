@@ -1,0 +1,119 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}任务管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/table_tr.css'%}">
+    <link rel="stylesheet" href="{% static 'css/LogoColor.css' %}">
+{% endblock %}
+{% block functionClass4 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+   <li>任务管理</li>
+    <li class="active"><a href="{% url 'taskInfo' %}">任务信息</a></li>
+    <li class="active">任务详细信息</li>
+{% endblock %}
+{% block addOrReturn %}
+    <a href="{% url 'taskInfo' %}" style="float:right ">
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+        返回
+    </a>
+{% endblock %}
+{% block functionContent %}
+    {% if not isPerson %}
+        <div class="col-lg-offset-1 col-lg-10">
+            <table class="table-bordered table-hover text-center" style="width: 100%">
+                <tr class="tr1">
+                    <td>任务名称</td>
+                    <td>{{ currentInfo.taskName }}</td>
+                </tr>
+                <tr class="tr1">
+                    <td>任务描述</td>
+                    <td>{{ currentInfo.taskDescription }}</td>
+                </tr>
+                <tr class="tr1">
+                    <td>所属联盟</td>
+                    <td>{{ currentInfo.unityID.unityName }}</td>
+                </tr>
+                <tr class="tr1">
+                    <td>截止日期</td>
+                    <td>{{ currentInfo.deadline }}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-lg-offset-1 col-lg-10 text-center"></div>
+        <div class="col-lg-offset-1 col-lg-10 text-center">
+            {% if request.user.identityClass == 2 %}
+                {% if not exist %}
+                    <a class="btn btn-default small" data-toggle="modal" data-target="#myModal" onclick="receiveCompanyTaskID({{ currentInfo.id }})">确认领取 </a>
+                {% else %}
+                    <button type="button" class="btn btn-success">已领取</button>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">提示信息</h4>
+                  </div>
+                  <div class="modal-body">
+                    任务一旦领取则无法取消，是否领取？
+                  </div>
+                  <div class="modal-footer">
+                    <input type="hidden" id="task_id"/>
+                    <input type="hidden" id="url_root" value="{% url 'receiveCompanyTask' %}"/>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <a onclick="urlSubmit()" class="btn btn-primary">确认</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+    {% endif %}
+    {% if isPerson %}
+        <div class="col-lg-offset-1 col-lg-10">
+            <table class="table-bordered table-hover text-center" style="width: 100%">
+                <tr class="tr1">
+                    <td>任务名称</td>
+                    <td>{{ currentInfo.taskName }}</td>
+                </tr>
+                <tr class="tr1">
+                    <td>任务描述</td>
+                    <td>{{ currentInfo.taskDescription }}</td>
+                </tr>
+                <tr class="tr1">
+                    <td>负责人</td>
+                    <td>{{ currentInfo.receiver.holder }}</td>
+                </tr>
+                <tr class="tr1">
+                    <td>截止日期</td>
+                    <td>{{ currentInfo.deadline }}</td>
+                </tr>
+                <tr class="tr1">
+                    <td>是否已读</td>
+                    <td>
+                        {% if currentInfo.isRead %}
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        {% else %}
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        {% if request.user.identityClass == 3 %}
+        <div class="col-lg-offset-1 col-lg-10 text-center"></div>
+        <div class="col-lg-offset-1 col-lg-10 text-center">
+            {% if currentInfo.isRead %}
+                <button type="button" class="btn btn-success">已读</button>
+            {% else %}
+                <a href="{% url 'receivingPersonTask' %}?id={{ currentInfo.id }}" class="btn btn-default small">确认已读 </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+    {% endif %}
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/Task.js' %}"></script>
+{% endblock %}

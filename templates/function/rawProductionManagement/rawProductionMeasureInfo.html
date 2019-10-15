@@ -1,0 +1,206 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}种类管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/LogoColor.css' %}">
+{% endblock %}
+{% block functionClass5 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>品种管理</li>
+    <li class="active"><a href="{% url 'rawProductionMeasureInfo' %}">质量环节</a></li>
+{% endblock %}
+
+{% block addOrReturn %}
+    {% if request.user.identityClass == 2 %}
+        {% if request.user.company.companyID == company_current_id %}
+            <a href="{% url 'rawProductionMeasureInfoAdd' %}" style="float:right;padding-left: 10px;text-decoration: none;">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                添加质量管理环节
+            </a>
+            <a href="{% url 'rawProductionMeasureSort' %}" style="float:right;text-decoration: none;">
+                <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+                排序
+            </a>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+{% block functionContent %}
+    {% if request.user.identityClass == 1 %}
+        <form class="form-inline">
+            <div class="form-group col-sm-6 text-center">
+                <label for="company_query" class="control-label" >公司&nbsp;&nbsp;</label>
+                <select class="form-control text-center" id="company_query" name="company_query" onchange="getCurrentCompany()">
+                    {% for company in companyInfo_list %}
+                        <option value="{{ company.companyID }}" {% if company_current_id == company.companyID %}selected = "selected"{% endif %}>{{ company.companyName }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-sm-6 text-center">
+                <label for="rawProduction_current" class="control-label ">品种&nbsp;&nbsp;</label>
+                <select class="form-control text-center" id="rawProduction_current" name="rawProduction_current" onchange="getCurrentRawProduction()">
+                {% if rawProductionInfo_list %}
+                    {% for rawProduction in rawProductionInfo_list %}
+                        <option value="{{ rawProduction.id }}" {% if rawProduction_current_id == rawProduction.id %}selected = "selected"{% endif %}>{{ rawProduction.rawProductionName }}</option>
+                    {% endfor %}
+                {% else %}
+                    <option value="">无</option>
+                {% endif %}
+                </select>
+            </div>
+        </form>
+        <table class="table table-bordered table-hover table-striped text-center" style="position: relative; top:10px;">
+            <tr>
+                <td>质量环节名称</td>
+                <td>品种名称</td>
+                <td>阶段序号</td>
+            </tr>
+        {% for rawProductionMeasure in rawProductionMeasure_list %}
+            <tr>
+                <td><a href="{% url 'rawProductionMeasureInfoDetails' %}?id={{ rawProductionMeasure.id }}">{{ rawProductionMeasure.qualityControlMeasure }}</a></td>
+                <td>{{ rawProductionMeasure.rawProductionName }}</td>
+                <td>{{ rawProductionMeasure.orderNumber }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+        {% if not rawProductionMeasure_list %}
+            <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有质量环节信息</div>
+        {% endif %}
+    {% elif request.user.identityClass == 2 %}
+        <form class="form-inline">
+            <div class="form-group col-sm-6 text-center">
+                <label for="company_query" class="control-label" >公司&nbsp;&nbsp;</label>
+                <select class="form-control text-center" id="company_query" name="company_query" onchange="getCurrentCompany()">
+                    {% for company in companyInfo_list %}
+                        <option value="{{ company.companyID }}" {% if company_current_id == company.companyID %}selected = "selected"{% endif %}>{{ company.companyName }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-sm-3 text-center">
+                <label for="rawProduction_current" class="control-label ">品种&nbsp;&nbsp;</label>
+                <select class="form-control text-center" id="rawProduction_current" name="rawProduction_current" onchange="getCurrentRawProduction()">
+                {% if rawProductionInfo_list %}
+                    {% for rawProduction in rawProductionInfo_list %}
+                        <option value="{{ rawProduction.id }}" {% if rawProduction_current_id == rawProduction.id %}selected = "selected"{% endif %}>{{ rawProduction.rawProductionName }}</option>
+                    {% endfor %}
+                {% else %}
+                    <option value="">无</option>
+                {% endif %}
+                </select>
+            </div>
+        </form>
+        <table class="table table-bordered table-hover table-striped text-center" style="position: relative; top:10px;">
+            <tr>
+                <td>质量环节名称</td>
+                <td>品种名称</td>
+                <td>阶段序号</td>
+                {% if request.user.company.companyID == company_current_id %}
+                    <td>编辑</td>
+                {% endif %}
+            </tr>
+        {% for rawProductionMeasure in rawProductionMeasure_list %}
+            <tr>
+                <td><a href="{% url 'rawProductionMeasureInfoDetails' %}?id={{ rawProductionMeasure.id }}">{{ rawProductionMeasure.qualityControlMeasure }}</a></td>
+                <td>{{ rawProductionMeasure.rawProductionName }}</td>
+                <td>{{ rawProductionMeasure.orderNumber }}</td>
+                {% if request.user.company.companyID == company_current_id %}
+                    <td>
+                        <a href="{% url 'rawProductionMeasureInfoUpdate' %}?id={{ rawProductionMeasure.id }}">修改  </a>
+                        <a data-toggle="modal" data-target="#myModal" onclick="delID({{ rawProductionMeasure.id }})">删除</a>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </table>
+        {% if not rawProductionMeasure_list %}
+            <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有质量环节信息</div>
+        {% endif %}
+    {% elif request.user.identityClass == 3 %}
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="rawProduction_current" class="col-sm-5 control-label">品种&nbsp;&nbsp;</label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="rawProduction_current" name="rawProduction_current" onchange="getCurrentRawProduction_operator()">
+                    {% if rawProductionInfo_list %}
+                        {% for rawProduction in rawProductionInfo_list %}
+                            <option value="{{ rawProduction.id }}" {% if rawProduction_current_id == rawProduction.id %}selected = "selected"{% endif %}>{{ rawProduction.rawProductionName }}</option>
+                        {% endfor %}
+                    {% else %}
+                        <option value="">无</option>
+                    {% endif %}
+                    </select>
+                </div>
+            </div>
+        </form>
+        <table class="table table-bordered table-hover table-striped text-center" style="position: relative; top:10px;">
+            <tr>
+                <td>质量环节名称</td>
+                <td>品种名称</td>
+                <td>阶段序号</td>
+            </tr>
+        {% for rawProductionMeasure in rawProductionMeasure_list %}
+            <tr>
+                <td><a href="{% url 'rawProductionMeasureInfoDetails' %}?id={{ rawProductionMeasure.id }}">{{ rawProductionMeasure.qualityControlMeasure }}</a></td>
+                <td>{{ rawProductionMeasure.rawProductionName }}</td>
+                <td>{{ rawProductionMeasure.orderNumber }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+        {% if not rawProductionMeasure_list %}
+            <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有质量环节信息</div>
+        {% endif %}
+    {% endif %}
+
+{% endblock %}
+{% block pagination %}
+    {% if rawProductionMeasure_list %}
+        <nav aria-label="Page navigation" class="text-center">
+          <ul class="pagination">
+            {% if rawProductionMeasure_list.has_previous %}
+            <li>
+              <a href="?page={{ rawProductionMeasure.previous_page_number }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for pg in rawProductionMeasure_list.paginator.page_range %}
+                {% if rawProductionMeasure_list.number == pg %}
+                    <li class="active"><a href="?page={{ pg }}&order={{ order }}&?company_current={{ company_current_id }}&rawProduction_current={{ rawProduction_current_id }}">{{ pg }}</a></li>
+                {% else %}
+                    <li><a href="?page={{ pg }}&order={{ order }}">{{ pg }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if rawProductionMeasure_list.has_next %}
+            <li>
+              <a href="?page={{ rawProductionMeasure_list.next_page_number}}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">提示信息</h4>
+              </div>
+              <div class="modal-body">
+                确认删除?
+              </div>
+              <div class="modal-footer">
+                <input type="hidden" id="delete_id"/>
+                <input type="hidden" id="url_root" value="{% url 'rawProductionMeasureInfoDelete' %}"/>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <a onclick="urlSubmit()" class="btn btn-primary">确认</a>
+              </div>
+            </div>
+          </div>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block script %}
+    <script src="{% static 'js/deleteTips.js'%}"></script>
+    <script src="{% static 'js/getCurrentMeasures.js'%}"></script>
+{% endblock %}

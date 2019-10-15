@@ -1,0 +1,112 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}机构管理{% endblock %}
+{% block css %}{% endblock %}
+{% block functionClass2 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>机构管理</li>
+    <li class="active"><a href="{% url 'companyInfo' %}">单位信息</a></li>
+{% endblock %}
+{% block addOrReturn %}
+    <a href="{% url 'companyInfoAdd' %}" style="float:right">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        添加
+    </a>
+{% endblock %}
+{% block functionContent %}
+    {% if companyInfo_list %}
+    <table class="table table-bordered table-hover table-striped text-center">
+        <tr>
+            <td>公司名称 </td>
+            <td>所属联盟</td>
+            <td>
+                加入日期
+                {% if order == 1 %}
+                    <a href="?order=2"><span class="glyphicon glyphicon-arrow-up small" aria-hidden="true"></span></a>
+                {% else %}
+                    <a href="?order=1"><span class="glyphicon glyphicon-arrow-down small" aria-hidden="true"></span></a>
+                {% endif %}
+            </td>
+            <td>
+                最后修改日期
+                {% if order == 3 %}
+                    <a href="?order=4"><span class="glyphicon glyphicon-arrow-up small" aria-hidden="true"></span></a>
+                {% elif order == 4 %}
+                    <a href="?order=3"><span class="glyphicon glyphicon-arrow-down small" aria-hidden="true"></span></a>
+                {% else %}
+                    <a href="?order=4"><span class="glyphicon glyphicon-arrow-up small" aria-hidden="true"></span></a>
+                {% endif %}
+            </td>
+            <td>编辑</td>
+        </tr>
+        {% for companyInfo in companyInfo_list %}
+        <tr>
+            <td><a href="{% url 'companyInfoDetails' %}?id={{ companyInfo.companyID }}">{{ companyInfo.companyName}}</a></td>
+            <td><a href="{% url 'unityInfoDetails' %}?id={{ companyInfo.unityID.unityID }}">{{ companyInfo.unityID.unityName }}</a></td>
+            <td>{{ companyInfo.joiningDate|date:"Y-m-d" }}</td>
+            <td>{{ companyInfo.updateTime|date:"Y-m-d H:i:s" }}</td>
+            <td>
+                <a href="{% url 'companyInfoUpdate' %}?id={{ companyInfo.companyID }}">修改  </a>
+                {% if not request.user.company.companyID == companyInfo.companyID %}
+                <a data-toggle="modal" data-target="#myModal" onclick="delID({{ companyInfo.companyID }})">删除</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+                        <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有公司信息</div>
+    {% endif %}
+{% endblock %}
+{% block pagination %}
+    {% if companyInfo_list %}
+        <nav aria-label="Page navigation" class="text-center">
+          <ul class="pagination">
+            {% if companyInfo_list.has_previous %}
+            <li>
+              <a href="?page={{ companyInfo_list.previous_page_number }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for pg in companyInfo_list.paginator.page_range %}
+                {% if companyInfo_list.number == pg %}
+                    <li class="active"><a href="?page={{ pg }}&order={{ order }}">{{ pg }}</a></li>
+                {% else %}
+                    <li><a href="?page={{ pg }}&order={{ order }}">{{ pg }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if companyInfo_list.has_next %}
+            <li>
+              <a href="?page={{ companyInfo_list.next_page_number}}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">提示信息</h4>
+              </div>
+              <div class="modal-body">
+                确认删除?
+              </div>
+              <div class="modal-footer">
+                <input type="hidden" id="delete_id"/>
+                <input type="hidden" id="url_root" value="{% url 'companyInfoDelete' %}"/>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <a onclick="urlSubmit()" class="btn btn-primary">确认</a>
+              </div>
+            </div>
+          </div>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/deleteTips.js'%}"></script>
+{% endblock %}

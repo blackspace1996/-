@@ -1,0 +1,63 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}生产管理{% endblock %}
+{% block css %}
+    <link href="{% static 'datetimepicker/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'datetimepicker/bootstrap/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="{% static 'css/LogoColor.css' %}">
+    <link rel="stylesheet" href="{% static 'css/table_tr.css'%}">
+{% endblock %}
+{% block functionClass2 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>生产管理</li>
+    <li class="active"><a href="{% url 'measuresConfirming' %}">质量环节</a></li>
+{% endblock %}
+{% block tips%}<span style="color:red">&lt本模块所有操作均记录操作者并同时检测数据库是否被非法篡改&gt</span>{% endblock %}
+{% block addOrReturn %}
+    <a href="{% url 'measuresConfirming' %}?id={{ currentInfo.sowingBatch.id }}" style="float:right">
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+        返回
+    </a>
+{% endblock %}
+{% block functionContent %}
+    <div class="col-lg-offset-1 col-lg-10">
+        <table class="table-bordered table-hover text-center" style="width: 100%">
+            <tr class="tr1">
+                <td>单位名称</td>
+                <td>{{ currentInfo.company.companyName}}</td>
+            </tr>
+            <tr class="tr1">
+                <td>品种名称</td>
+                <td>{{ currentInfo.rawProduction.rawProductionName }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>批次别名</td>
+                <td>{{ currentInfo.sowingBatch.sowingName }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>备注</td>
+                <td>{{ currentInfo.confirmingTips }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>确认时间</td>
+                <td>{{ currentInfo.confirmingTime }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>确认人</td>
+                <td>{{ currentInfo.confirmingMember }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>记录人</td>
+                <td>{{ currentInfo.recorder.holder }}</td>
+            </tr>
+        </table>
+    </div>
+
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" src="{% static 'datetimepicker/jquery/jquery-1.8.3.min.js' %}" charset="UTF-8"></script>
+    <script type="text/javascript" src="{% static 'datetimepicker/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'datetimepicker/js/bootstrap-datetimepicker.js' %}" charset="UTF-8"></script>
+    <script type="text/javascript" src="{% static 'datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js' %}" charset="UTF-8"></script>
+    <script type="text/javascript" src="{% static 'js/shareSwitch.js' %}"></script>
+{% endblock %}

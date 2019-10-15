@@ -1,0 +1,98 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}收支信息{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/table_tr.css'%}">
+{% endblock %}
+{% block functionClass9 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>成本管理</li>
+    <li class="active"><a href="{% url 'costManagementInfo' %}">收支信息</a></li>
+    <li>收支详细信息</li>
+{% endblock %}
+{% block tips%}<span style="color:red">&lt本模块所有操作均记录操作者并同时检测数据库是否被非法篡改&gt</span>{% endblock %}
+{% block addOrReturn %}
+    <a href="{% url 'costManagementInfo' %}" style="float:right ">
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+        返回
+    </a>
+{% endblock %}
+{% block functionContent %}
+    <div class="col-lg-offset-1 col-lg-10">
+        <table class="table-bordered table-hover text-center" style="width: 100%">
+            {% if Type == "cost" %}
+            <tr class="tr1">
+                <td>花销名称</td>
+                <td>{{ currentInfo.costName }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>花销类型</td>
+                <td>
+                    {% if currentInfo.costType == "food" %}
+                        餐饮
+                    {% elif currentInfo.costType == "purchase" %}
+                        采购
+                    {% elif currentInfo.costType == "waterCharge" %}
+                        水费
+                    {% elif currentInfo.costType == "electricCharge" %}
+                        电费
+                    {% elif currentInfo.costType == "salary" %}
+                        工资
+                    {% else %}
+                        其他
+                    {% endif %}
+                </td>
+            </tr>
+            <tr class="tr1">
+                <td>花销备注</td>
+                <td>{{ currentInfo.costTips }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>花销金额</td>
+                <td>{{ currentInfo.costAmount }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>记录人</td>
+                <td>{{ currentInfo.recorder.holder }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>花销日期</td>
+                <td>{{ currentInfo.costTime }}</td>
+            </tr>
+            {% else %}
+            <tr class="tr1">
+                <td>收入名称</td>
+                <td>{{ currentInfo.incomeName }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>收入类型</td>
+                <td>
+                    {% if currentInfo.incomeType == "sale"  %}
+                        销售
+                    {% elif currentInfo.incomeType == "salary" %}
+                        补贴
+                    {% else %}
+                        其他
+                    {% endif %}
+                </td>
+            </tr>
+            <tr class="tr1">
+                <td>花销备注</td>
+                <td>{{ currentInfo.incomeTips }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>收入金额</td>
+                <td>{{ currentInfo.incomeAmount }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>记录人</td>
+                <td>{{ currentInfo.recorder.holder }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>收入日期</td>
+                <td>{{ currentInfo.incomeTime }}</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+{% endblock %}

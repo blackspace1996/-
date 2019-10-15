@@ -1,0 +1,71 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}单位信息{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/table_tr.css'%}">
+{% endblock %}
+{% block functionClass2 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>机构管理</li>
+    <li class="active"><a href="{% url 'companyInfo' %}">单位信息</a></li>
+    <li>单位详细信息</li>
+{% endblock %}
+{% block addOrReturn %}
+    <a href="{% url 'companyInfo' %}" style="float:right ">
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+        返回
+    </a>
+{% endblock %}
+{% block functionContent %}
+    <div class="col-lg-offset-1 col-lg-10">
+        <table class="table-bordered table-hover text-center" style="width: 100%">
+            <tr class="tr1">
+                <td>单位名称</td>
+                <td>{{ currentInfo.companyName }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>企业注册号</td>
+                <td>{{ currentInfo.companyRegisterNumber }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>企业热线</td>
+                <td>{{ currentInfo.telephone }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>企业法人</td>
+                <td>{{ currentInfo.legalPersonName }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>法人联系方式</td>
+                <td>{{ currentInfo.legalPersonPhone }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>产品仓库数量</td>
+                <td>{{ currentInfo.amountOfProStoreHouse }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>投入品仓库数量</td>
+                <td>{{ currentInfo.amountOfItemStoreHouse }}</td>
+            </tr>
+
+            {% if currentInfo.superCompany %}
+            <tr class="tr1">
+                <td>父公司</td>
+                <td>{{ currentInfo.superCompany.companyName }}</td>
+            </tr>
+            {% endif %}
+            <tr class="tr1">
+                <td>所属联盟</td>
+                <td>{{ currentInfo.unityID.unityName }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>加入时间</td>
+                <td>{{ currentInfo.joiningDate }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>最后修改日期</td>
+                <td>{{ currentInfo.updateTime }}</td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

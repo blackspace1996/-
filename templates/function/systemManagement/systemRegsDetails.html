@@ -1,0 +1,24 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}制度详情{% endblock %}
+{% block css %}{% endblock %}
+{% block functionClass1 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>信息展示</li>
+    <li class="active"><a href="{% url 'systemRegs' %}">规章制度</a></li>
+    <li class="active">制度详情</li>
+{% endblock %}
+{% block addOrReturn %}
+    <a href="{% url 'systemRegs' %}" style="float:right ">
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+        返回
+    </a>
+{% endblock %}
+{% block functionContent %}
+    <h1 class="text-center">{{ currentNews.regName }}</h1>
+    <HR align=center width=80% color=#987cb9 SIZE=1>
+    <div class="lead col-md-offset-1" style="width: 1500px">{{ currentNews.regDescription|safe }}</div>
+    <HR align=center width=80% color=#987cb9 SIZE=1>
+    <p class="small col-md-offset-1">发布日期:{{ currentNews.createTime }}</p>
+
+{% endblock %}

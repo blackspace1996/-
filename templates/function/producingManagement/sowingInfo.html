@@ -1,0 +1,218 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}生产管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/LogoColor.css' %}">
+{% endblock %}
+{% block functionClass6 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>生产管理</li>
+    <li class="active"><a href="{% url 'sowingInfo' %}">播种信息</a></li>
+{% endblock %}
+{% block tips%}<span style="color:red">&lt本模块所有操作均记录操作者并同时检测数据库是否被非法篡改&gt</span>{% endblock %}
+{% block addOrReturn %}
+    {% if not request.user.identityClass == 1 %}
+    <a href="{% url 'sowingInfoAdd' %}" style="float:right">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        新增播种任务
+    </a>
+    {% endif %}
+{% endblock %}
+{% block functionContent %}
+    {% if request.user.identityClass == 1 %}
+        <form class="form-inline">
+            <div class="form-group col-sm-6 text-center">
+                <label for="company_query" class="control-label" >公司&nbsp;&nbsp;</label>
+                <select class="form-control text-center" id="company_query" name="company_query" onchange="getCurrentCompany()">
+                    {% for company in companyInfo_list %}
+                        <option value="{{ company.companyID }}" {% if company_current == company.companyID %}selected = "selected"{% endif %}>{{ company.companyName }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-sm-6 text-center">
+                <label for="rawProduction_current" class="control-label ">品种&nbsp;&nbsp;</label>
+                <select class="form-control text-center" id="rawProduction_current" name="rawProduction_current" onchange="getCurrentRawProduction()">
+                {% if rawProductionInfo_list %}
+                    {% for rawProduction in rawProductionInfo_list %}
+                        <option value="{{ rawProduction.id }}" {% if rawProduction_current_id == rawProduction.id %}selected = "selected"{% endif %}>{{ rawProduction.rawProductionName }}</option>
+                    {% endfor %}
+                {% else %}
+                    <option value="">无</option>
+                {% endif %}
+                </select>
+            </div>
+        </form>
+        <div class="form-horizontal" style="visibility: hidden">
+            <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+            <div class="col-sm-10">
+              <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
+            </div>
+        </div>
+        {% if sowingInfo_list_get %}
+            <table class="table table-bordered table-hover table-striped text-center">
+                <tr>
+                    <td>批次别名</td>
+                    <td>播种产品</td>
+                    <td>种植地块</td>
+                    <td>播种人</td>
+                    <td>记录人</td>
+                    <td>是否收获</td>
+                    <td>数据状态</td>
+                    <td>质量环节</td>
+                    <td>投入品使用情况</td>
+                </tr>
+            {% for sowingInfo in sowingInfo_list %}
+                <tr>
+                    <td>{{ sowingInfo.sowingName }}</td>
+                    <td>{{ sowingInfo.sowingProduction.rawProductionName }}</td>
+                    <td>{{ sowingInfo.sowingBlock.blockName }}</td>
+                    <td>{{ sowingInfo.sowingMember.memberName }}</td>
+                    <td>{{ sowingInfo.recorder.holder }}</td>
+                    <td>
+                        {% if sowingInfo.isHarvest %}
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        {% else %}
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if sowingInfo.isNormal %}
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        {% else %}
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        {% endif %}
+                    </td>
+                    <td><a href="{% url 'measuresConfirming' %}?id={{ sowingInfo.id }}">查看/验证质量环节</a></td>
+                    <td><a href="{% url 'itemCostQuery' %}?id={{ sowingInfo.id }}">查看投入品使用情况</a></td>
+                </tr>
+            {% endfor %}
+            </table>
+            {% if not sowingInfo_list %}
+                <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有播种信息</div>
+            {% endif %}
+        {% endif %}
+    {% else %}
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="rawProduction_current" class="col-sm-5 control-label">品种&nbsp;&nbsp;</label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="rawProduction_current" name="rawProduction_current" onchange="getCurrentRawProduction_operator()">
+                    {% if rawProductionInfo_list %}
+                        {% for rawProduction in rawProductionInfo_list %}
+                            <option value="{{ rawProduction.id }}" {% if rawProduction_current_id == rawProduction.id %}selected = "selected"{% endif %}>{{ rawProduction.rawProductionName }}</option>
+                        {% endfor %}
+                    {% else %}
+                        <option value="">无</option>
+                    {% endif %}
+                    </select>
+                </div>
+            </div>
+        </form>
+        {% if sowingInfo_list_get %}
+            <table class="table table-bordered table-hover table-striped text-center">
+                <tr>
+                    <td>批次别名</td>
+                    <td>播种产品</td>
+                    <td>种植地块</td>
+                    <td>播种人</td>
+                    <td>记录人</td>
+                    <td>是否收获</td>
+                    <td>数据状态</td>
+                    <td>质量环节</td>
+                    <td>投入品使用情况</td>
+                    {% if company_current == request.user.company.companyID %}
+                        <td>
+                            编辑
+                        </td>
+                    {% endif %}
+                </tr>
+            {% for sowingInfo in sowingInfo_list %}
+                <tr>
+                    <td><a href="{% url 'sowingInfoDetails' %}?id={{ sowingInfo.id }}">{{ sowingInfo.sowingName }}</a></td>
+                    <td>{{ sowingInfo.sowingProduction.rawProductionName }}</td>
+                    <td>{{ sowingInfo.sowingBlock.blockName }}</td>
+                    <td>{{ sowingInfo.sowingMember.memberName }}</td>
+                    <td>{{ sowingInfo.recorder.holder }}</td>
+                    <td>
+                        {% if sowingInfo.isHarvest %}
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        {% else %}
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if sowingInfo.isNormal %}
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        {% else %}
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        {% endif %}
+                    </td>
+                    <td><a href="{% url 'measuresConfirming' %}?id={{ sowingInfo.id }}">查看/验证质量环节</a></td>
+                    <td><a href="{% url 'itemCostQuery' %}?id={{ sowingInfo.id }}">查看投入品使用情况</a></td>
+                    {% if company_current == request.user.company.companyID %}
+                        <td>
+                            <a data-toggle="modal" data-target="#myModal" onclick="delID({{ sowingInfo.id }})">删除</a>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </table>
+            {% if not sowingInfo_list %}
+                <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有播种信息</div>
+            {% endif %}
+        {% endif %}
+    {% endif  %}
+{% endblock %}
+{% block pagination %}
+    {% if sowingInfo_list %}
+        <nav aria-label="Page navigation" class="text-center">
+          <ul class="pagination">
+            {% if sowingInfo_list.has_previous %}
+            <li>
+              <a href="?page={{ sowingInfo_list.previous_page_number }}&company_current={{ company_current }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for pg in sowingInfo_list.paginator.page_range %}
+                {% if sowingInfo_list.number == pg %}
+                    <li class="active"><a href="?page={{ pg }}&order={{ order }}&company_current={{ company_current }}">{{ pg }}</a></li>
+                {% else %}
+                    <li><a href="?page={{ pg }}&order={{ order }}&company_current={{ company_current }}">{{ pg }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if sowingInfo_list.has_next %}
+            <li>
+              <a href="?page={{ sowingInfo_list.next_page_number}}&company_current={{ company_current }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">提示信息</h4>
+              </div>
+              <div class="modal-body">
+                一旦删除播种信息，会将所有关联信息一并删除，真的要删除吗？
+              </div>
+              <div class="modal-footer">
+                <input type="hidden" id="delete_id"/>
+                <input type="hidden" id="url_root" value="{% url 'sowingInfoDelete' %}"/>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <a onclick="urlSubmit()" class="btn btn-primary">确认</a>
+              </div>
+            </div>
+          </div>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/deleteTips.js'%}"></script>
+<script src="{% static 'js/getCurrentMeasures.js'%}"></script>
+{% endblock %}

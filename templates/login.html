@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<!-- 感谢bootstrap4提供的模板 -->
+<html lang="zh">
+    <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    {% load staticfiles %}
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>企业登录</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'welcome/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'welcome/floating-labels.css' %}" rel="stylesheet">
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <a class="navbar-brand" href="{% url 'index' %}">质量可追溯生产管理系统</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto" style="visibility: hidden">
+          <li class="nav-item active">
+            <a class="nav-link" href="https://v4.bootcss.com/docs/4.0/examples/jumbotron/#">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://v4.bootcss.com/docs/4.0/examples/jumbotron/#">Link</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="https://v4.bootcss.com/docs/4.0/examples/jumbotron/#">Disabled</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="http://example.com/" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+              <a class="dropdown-item" href="https://v4.bootcss.com/docs/4.0/examples/jumbotron/#">Action</a>
+              <a class="dropdown-item" href="https://v4.bootcss.com/docs/4.0/examples/jumbotron/#">Another action</a>
+              <a class="dropdown-item" href="https://v4.bootcss.com/docs/4.0/examples/jumbotron/#">Something else here</a>
+            </div>
+          </li>
+        </ul>
+        <a href="{% url 'index' %}"><button class="btn btn-outline-info my-2 my-sm-0">返回首页</button></a>
+      </div>
+    </nav>
+    <img src="{% static 'img/bgNew.jpg' %}" style="position: fixed;width:100vw; height:100vh;z-index: -1" />
+
+    <form class="form-signin" method="post" action="{% url 'login' %}">
+      <div class="text-center mb-4">
+        <img class="mb-4" src="{% static 'img/titlelogo.png' %}" alt="logo"  height="72">
+        <h1 class="h3 mb-3 font-weight-normal" style="color: whitesmoke; opacity: 0.7">企业登录</h1>
+      </div>
+
+      <div class="form-label-group" style="opacity: 0.8;">
+        <input id="username" name="username" class="form-control" placeholder="用户名" required="">
+          <label for="username">用户名{% if userError %}<span id="userErrorTips" style="color: red">（用户名或密码错误）</span>{% endif %}</label>
+      </div>
+
+      <div class="form-label-group" style="opacity: 0.8;">
+        <input type="password" name="password" id="psd" class="form-control" placeholder="密码" required="">
+        <label for="psd">密码</label>
+      </div>
+
+       <div class="form-label-group" style="opacity: 0.8;">
+           <input type="text" id="captcha" name="captcha_1" class="form-control" placeholder="验证码" required="">
+           <label for="captcha">验证码{% if error.captcha %}<span id="captchaErrorTips" style="color: red">（验证码错误）</span>{% endif %}</label>
+       </div>
+
+        <div class="form-label-group" style="opacity: 0.8;">
+            <input style="display: none" name="captcha_0" value="{{ hashkey }}" required="" id="id_captcha_0">
+            <img id="verifacation" src="{{ image_url }}"  alt="captcha" class="captcha" style="float: left; width: 90px; height: 36px;" onclick="refresh_img(this)">
+            <button class="btn btn-outline-light" type="submit" style="float: right;">登  录</button>
+        </div>
+        {% csrf_token %}
+    </form>
+
+</body></html>
+<script>
+    var userError = document.getElementById("userErrorTips");
+    var captchaError = document.getElementById("captchaErrorTips");
+    var userEmpty = document.getElementById("userEmptyTips");
+    var psdEmpty = document.getElementById("psdEmptyTips");
+
+    var username = document.getElementById("username");
+    var psd = document.getElementById("psd");
+    var captcha = document.getElementById("captcha");
+    var verifacation = document.querySelector('#verifacation');
+
+    verifacation.addEventListener('click', ()=>{
+        var ajax = new XMLHttpRequest();
+        ajax.open('GET','/refresh' )
+        ajax.setRequestHeader('X-Requested-With','XMLHttpRequest')
+        ajax.onreadystatechange = ()=>{
+            if(ajax.readyState === 4){
+                if(ajax.status === 200){
+                    var refreshVerifacationUrl = JSON.parse(ajax.response).image_url
+                    verifacation.src = refreshVerifacationUrl
+                }
+            }
+        }
+        ajax.send()
+    })
+    username.onclick = function () {
+        if (userError){
+            userError.style.display = "None"};
+        userEmpty.style.display = "None";
+    };
+    psd.onclick = function () {
+        psdEmpty.style.display = "None";
+    };
+    captcha.onclick = function () {
+        captchaError.style.display = "None";
+    };
+    function refresh_img(obj) {
+        obj.src=obj.src+"?"
+    }
+</script>

@@ -1,0 +1,104 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}系统动态{% endblock %}
+{% block css %}{% endblock %}
+{% block functionClass1 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>信息展示</li>
+    <li class="active"><a href="{% url 'systemNews' %}">系统动态</a></li>
+{% endblock %}
+{% block addOrReturn %}
+    <a href="{% url 'systemNewsAdd' %}" style="float:right">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        添加
+    </a>
+{% endblock %}
+{% block functionContent %}
+    <table class="table table-bordered table-hover table-striped text-center">
+        <tr>
+            <td>动态标题 </td>
+            <td>
+                发布日期
+                {% if order == 1 %}
+                    <a href="?order=2"><span class="glyphicon glyphicon-arrow-up small" aria-hidden="true"></span></a>
+                {% else %}
+                    <a href="?order=1"><span class="glyphicon glyphicon-arrow-down small" aria-hidden="true"></span></a>
+                {% endif %}
+            </td>
+            <td>
+                修改日期
+                {% if order == 3 %}
+                    <a href="?order=4"><span class="glyphicon glyphicon-arrow-up small" aria-hidden="true"></span></a>
+                {% elif order == 4 %}
+                    <a href="?order=3"><span class="glyphicon glyphicon-arrow-down small" aria-hidden="true"></span></a>
+                {% else %}
+                    <a href="?order=4"><span class="glyphicon glyphicon-arrow-up small" aria-hidden="true"></span></a>
+                {% endif %}
+            </td>
+            <td>所属联盟</td>
+            <td>编辑</td>
+        </tr>
+        {% for News in SysNews_list %}
+        <tr>
+            <td><a href="{% url 'systemNewsDetails' %}?id={{ News.id }}">{{ News.title }}</a></td>
+            <td>{{ News.createTime|date:"Y-m-d H:i:s" }}</td>
+            <td>{{ News.updateTime|date:"Y-m-d H:i:s" }}</td>
+            <td>{{ News.unity.unityName }}</td>
+            <td>
+                <a href="{% url 'systemNewsUpdate' %}?id={{ News.id }}">修改  </a>
+                <a data-toggle="modal" data-target="#myModal" onclick="delID({{ News.id }})">删除</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+{% block pagination %}
+<nav aria-label="Page navigation" class="text-center">
+  <ul class="pagination">
+    {% if SysNews_list.has_previous %}
+    <li>
+      <a href="?page={{ SysNews_list.previous_page_number }}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    {% endif %}
+    {% for pg in SysNews_list.paginator.page_range %}
+        {% if SysNews_list.number == pg %}
+            <li class="active"><a href="?page={{ pg }}&order={{ order }}">{{ pg }}</a></li>
+        {% else %}
+            <li><a href="?page={{ pg }}&order={{ order }}">{{ pg }}</a></li>
+        {% endif %}
+    {% endfor %}
+    {% if SysNews_list.has_next %}
+    <li>
+      <a href="?page={{ SysNews_list.next_page_number}}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">提示信息</h4>
+      </div>
+      <div class="modal-body">
+        确认删除?
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="delete_id"/>
+        <input type="hidden" id="url_root" value="{% url 'systemNewsDelete' %}"/>
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <a onclick="urlSubmit()" class="btn btn-primary">确认</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/deleteTips.js' %}"></script>
+{% endblock %}

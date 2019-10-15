@@ -1,0 +1,67 @@
+/*通用CSS*/
+@font-face {
+    font-family: 新楷体;
+    src:url("../font/楷体_GB2312.ttf");
+}
+
+.border{
+    border-radius: 10px;
+    border-width: 1px;
+    border-color: rgba(128, 128, 128, 0.57);
+    border-style: solid;
+}
+
+.line{
+    background-color: gray;
+    height: 1px;
+}
+
+body{
+    padding: 0;
+    margin: 0;
+    height: 100vh;
+    width: 100vw;
+}
+
+img#background{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    z-index: -999;
+}
+
+div#headerTitle{
+    position: relative;
+    margin-bottom:2vh;
+    width:90vw;
+    height: 12vh;
+    left:5vw;
+    right: 5vw;
+    overflow: hidden;
+}
+img#headerTitleLogo{
+    float:left;
+    width:150px;
+    height: 90px;
+}
+
+h1#headerTitleName{
+    font-family: 新楷体;
+    font-size: 36px;
+    font-weight: bold;
+    text-shadow: 1px 1px 5px #666;
+    color: rgba(38, 38, 38, 0.51);
+}
+footer>p{
+    margin:0;
+    padding:0;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.8;
+    color: white;
+}
+
+footer>p>a{
+    text-decoration: none;
+    color:white;
+}

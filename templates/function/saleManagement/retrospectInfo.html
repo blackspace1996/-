@@ -1,0 +1,85 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}销售管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/LogoColor.css' %}">
+{% endblock %}
+{% block functionClass10 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>销售管理</li>
+    <li class="active"><a href="{% url 'retrospectInfo' %}">追溯信息设置</a></li>
+{% endblock %}
+{% block tips%}<span style="color:red">&lt本模块所有操作均记录操作者并同时检测数据库是否被非法篡改&gt</span>{% endblock %}
+{% block addOrReturn %}
+    {% if pointed %}
+        <a href="{% url 'saleInfo' %}?id={{ id }}" style="float:right">
+            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+            返回销售信息
+        </a>
+    {% endif %}
+{% endblock %}
+{% block functionContent %}
+    <form method="post" action="{% url 'retrospectInfo'%}">
+        <div class="alert alert-info col-sm-offset-2 col-sm-8 text-center" style="background-color: #f0f0f0" role="alert" >
+            <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ current_rawProduction.rawProductionName }} <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                {% for rawProduction in rawProduction_list %}
+                <li><a href="?current_rawProduction={{ rawProduction.id }}">{{ rawProduction.rawProductionName }}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+        </div>
+        <div class="col-sm-offset-2 col-sm-8 disabled"
+             style="background-color: #dff0d8;color: #3c763d;    border: 1px solid #d6e9c6;
+    border-radius: 4px; margin-bottom: 15px;">
+            <h4 style="margin-top:10px;">播种环节</h4>
+            <label style="font-size: 14px; font-weight: normal" class="text-center">
+                <input type="checkbox" value="" checked style="height:16px;" disabled>
+                  &nbsp;播种（必选）
+            </label>
+        </div>
+        <div class="col-sm-offset-2 col-sm-8 disabled"
+             style="background-color: #d9edf7;color: #31708f;    border: 1px solid #bce8f1;
+    border-radius: 4px; margin-bottom: 15px;">
+            <h2 style="margin-top:10px;">质量环节</h2>
+            <hr style="height:1px;border:none;border-top:1px dashed #0066CC;" />
+            {% for measure in measure_list %}
+            <label style="font-size: 18px; font-weight: normal" class="text-center col-sm-4">
+                <input type="checkbox" name="option_{{ forloop.counter }}" value="{{ measure.id }}" {% if measure.flag %}checked{% endif %} style="height:18px;">
+                  &nbsp;{{ measure.qualityControlMeasure }}
+            </label>
+            {% endfor %}
+        </div>
+        <div class="col-sm-offset-2 col-sm-8 disabled"
+             style="background-color: #dff0d8;color: #3c763d;    border: 1px solid #d6e9c6;
+    border-radius: 4px; margin-bottom: 15px;">
+            <h4 style="margin-top:10px;">投入品环节</h4>
+            <label style="font-size: 14px; font-weight: normal" class="text-center">
+                <input type="checkbox" value="" checked style="height:16px;" disabled>
+                  &nbsp;投入品（必选）
+            </label>
+        </div>
+        <div class="col-sm-offset-2 col-sm-8 disabled"
+             style="background-color: #dff0d8;color: #3c763d;    border: 1px solid #d6e9c6;
+    border-radius: 4px; margin-bottom: 15px;">
+            <h4 style="margin-top:10px;">收获环节</h4>
+            <label style="font-size: 14px; font-weight: normal" class="text-center">
+                <input type="checkbox" value="" checked style="height:16px;" disabled>
+                  &nbsp;收获（必选）
+            </label>
+        </div>
+        <input style="display: none" name="current_rawProduction" value="{{ current_rawProduction.id }}" />
+        <div class="col-sm-offset-2 col-sm-8 text-center">
+            <button type="submit" class="btn btn-info">确认</button>
+        </div>
+
+        {% csrf_token %}
+    </form>
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/deleteTips.js'%}"></script>
+<script src="{% static 'js/getCurrentCompany.js'%}"></script>
+{% endblock %}

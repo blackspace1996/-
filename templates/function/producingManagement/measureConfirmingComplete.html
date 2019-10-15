@@ -1,0 +1,87 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}生产管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/LogoColor.css' %}">
+{% endblock %}
+{% block functionClass6 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>生产管理</li>
+    <li class="active"><a href="{% url 'measuresConfirming' %}">质量环节</a></li>
+{% endblock %}
+{% block tips%}<span style="color:red">&lt本模块所有操作均记录操作者并同时检测数据库是否被非法篡改&gt</span>{% endblock %}
+{% block addOrReturn %}
+    <a href="{% url 'measuresConfirming' %}?id={{ sowingInfo.id }}" style="float:right">
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+        返回
+    </a>
+{% endblock %}
+{% block functionContent %}
+<form class="form-horizontal" method="post" action="{% url 'measureConfirmingComplete' %}">
+    <div class="form-group">
+        <label for="sowingBatch" class="col-sm-2 control-label">批次别名</label>
+        <div class="col-sm-6">
+            <input class="form-control" name="sowingBatch" id="sowingBatch" value="{{ current_info.sowingBatch.sowingName }}" readonly>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="measure" class="col-sm-2 control-label">措施名称</label>
+        <div class="col-sm-6">
+            <input class="form-control" name="measure" id="measure" value="{{ current_info.measure.qualityControlMeasure }}" readonly>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="confirmingTips" class="col-sm-2 control-label">确认备注</label>
+        <div class="col-sm-6">
+            <input class="form-control" name="confirmingTips" id="confirmingTips" placeholder="请输入需要备注的内容">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="confirmingTime" class="col-sm-2 control-label">确认时间</label>
+        <div class="col-sm-8">
+            <div class="col-sm-4 input-group date form_date" data-date="" data-date-format="yyyy-mm-dd" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                <input type="text" name="confirmingTime" class="form-control" style="background-color: white" size="16"  value="" readonly>
+                <span class="input-group-addon "><span class="glyphicon glyphicon-remove"></span></span>
+                <span class="input-group-addon "><span class="glyphicon glyphicon-calendar"></span></span>
+            </div>
+        </div>
+        <input type="hidden" id="dtp_input2" value="" /><br/>
+    </div>
+    <div class="form-group">
+    <label for="confirmingMember" class="col-sm-2 control-label">确认人</label>
+        <div class="col-sm-6">
+            <input class="form-control" name="confirmingMember" id="confirmingMember" placeholder="请输入确认人员">
+        </div>
+    </div>
+    {% if error.confirmingMember %}
+        <div class="alert alert-danger col-md-offset-2 col-md-8 " role="alert">{{ error.confirmingMember.0 }}</div>
+    {% endif %}
+    <input style="display: none;" name="id" value="{{ current_info.id }}">
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-default">确认</button>
+        </div>
+    </div>
+    {% csrf_token %}
+</form>
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" src="{% static 'datetimepicker/jquery/jquery-1.8.3.min.js' %}" charset="UTF-8"></script>
+    <script type="text/javascript" src="{% static 'datetimepicker/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'datetimepicker/js/bootstrap-datetimepicker.js' %}" charset="UTF-8"></script>
+    <script type="text/javascript" src="{% static 'datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js' %}" charset="UTF-8"></script>
+    <script type="text/javascript">
+        $('.dropdown-toggle').dropdown();
+        $('.form_date').datetimepicker({
+            language:  'zh-CN',
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 0,
+            endDate:new Date()
+        });
+    </script>
+{% endblock %}

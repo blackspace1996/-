@@ -1,0 +1,96 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}日志记录{% endblock %}
+{% block css %}{% endblock %}
+{% block functionClass11 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>日志记录</li>
+    <li class="active"><a href="{% url 'logInfo' %}">查看日志</a></li>
+{% endblock %}
+{% block addOrReturn %}
+{% endblock %}
+{% block functionContent %}
+    {% if logInfo_list %}
+    <table class="table table-bordered table-hover table-striped text-center">
+        <tr>
+            <td>操作账号 </td>
+            <td>
+                操作日期
+                {% if order == 1 %}
+                    <a href="?order=2"><span class="glyphicon glyphicon-arrow-up small" aria-hidden="true"></span></a>
+                {% else %}
+                    <a href="?order=1"><span class="glyphicon glyphicon-arrow-down small" aria-hidden="true"></span></a>
+                {% endif %}
+            </td>
+            <td>操作地址</td>
+            <td>操作类型</td>
+            <td>操作板块</td>
+            <td>操作记录</td>
+        </tr>
+        {% for logInfo in logInfo_list %}
+        <tr>
+            <td>{{ logInfo.user.username}}</td>
+            <td>{{logInfo.actiontime|date:"Y-m-d H:i:s " }}</td>
+            <td>
+                {{ logInfo.ipaddress }}
+            </td>
+            <td>
+               {% if logInfo.action == 1 %}
+                     添加
+               {% elif logInfo.action == 2  %}
+                     删除
+               {% else %}
+                     修改
+               {% endif %}
+            </td>
+            <td>
+                {{ logInfo.objecttable }}
+            </td>
+            <td>
+                {% if logInfo.action == 1 %}
+                     添加{{ logInfo.message}}
+               {% elif logInfo.action == 2  %}
+                     删除{{ logInfo.message}}
+               {% else %}
+                     修改{{ logInfo.message}}
+               {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+                        <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有日志信息</div>
+    {% endif %}
+{% endblock %}
+{% block pagination %}
+    {% if logInfo_list %}
+        <nav aria-label="Page navigation" class="text-center">
+          <ul class="pagination">
+            {% if logInfo_list.has_previous %}
+            <li>
+              <a href="?page={{ logInfo_list.previous_page_number }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for pg in logInfo_list.paginator.page_range %}
+                {% if logInfo_list.number == pg %}
+                    <li class="active"><a href="?page={{ pg }}&order={{ order }}">{{ pg }}</a></li>
+                {% else %}
+                    <li><a href="?page={{ pg }}&order={{ order }}">{{ pg }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if logInfo_list.has_next %}
+            <li>
+              <a href="?page={{ logInfo_list.next_page_number}}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+    {% endif %}
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/deleteTips.js'%}"></script>
+{% endblock %}

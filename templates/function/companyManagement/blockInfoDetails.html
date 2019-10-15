@@ -1,0 +1,59 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}地块信息{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/table_tr.css'%}">
+{% endblock %}
+{% block functionClass2 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>机构管理</li>
+    <li class="active"><a href="{% url 'blockInfo' %}">地块信息</a></li>
+    <li>地块详细信息</li>
+{% endblock %}
+{% block addOrReturn %}
+    <a href="{% url 'blockInfo' %}" style="float:right ">
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+        返回
+    </a>
+{% endblock %}
+{% block functionContent %}
+    <div class="col-lg-offset-1 col-lg-10">
+        <table class="table-bordered table-hover text-center" style="width: 100%">
+            <tr class="tr1">
+                <td>地块名称</td>
+                <td>{{ currentInfo.blockName }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>隶属公司</td>
+                <td>{{ currentInfo.companyID.companyName }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>种植产品</td>
+                <td>
+                    {% if not currentInfo.rawProduction %}
+                        无
+                    {% else %}
+                        {{ currentInfo.rawProduction.rawProductionName }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr class="tr1">
+                <td>地块面积</td>
+                <td>{{ currentInfo.blockSquare }}</td>
+            </tr>
+            <tr class="tr1">
+                <td>单位</td>
+                <td>{% if currentInfo.unit == '1' %}
+                    亩
+                    {% else %}
+                    平方米
+                    {% endif %}
+                </td>
+            </tr>
+            <tr class="tr1">
+                <td>土壤信息</td>
+                <td>{{ currentInfo.soilInfo }}</td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

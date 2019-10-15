@@ -1,0 +1,106 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}投入品管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/LogoColor.css' %}">
+{% endblock %}
+{% block functionClass7 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>投入品管理</li>
+    <li class="active"><a href="{% url 'itemCost' %}">投入品种类</a></li>
+{% endblock %}
+{% block Tips %}<span style="color:red">&lt本模块所有操作均记录操作者并同时检测数据库是否被非法篡改&gt</span>{% endblock %}
+{% block addOrReturn %}
+    {% if request.user.identityClass == 2 %}
+    <a href="{% url 'itemCostAdd' %}" style="float:right">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        添加
+    </a>
+    {% endif %}
+{% endblock %}
+{% block functionContent %}
+    {% if itemCost_list_get %}
+        <table class="table table-bordered table-hover table-striped text-center">
+            <tr>
+                <td>投入品种类</td>
+                <td>使用批次</td>
+                <td>负责员工</td>
+                <td>使用日期</td>
+                <td>数据状态</td>
+                <td>操作</td>
+            </tr>
+        {% for itemCost in itemCost_list %}
+            <tr>
+                <td><a href="{% url 'itemCostDetails' %}?id={{ itemCost.id }}">{{ itemCost.item.itemName }}</a></td>
+                <td>{{ itemCost.costBatch.sowingName }}</td>
+                <td>{{ itemCost.member }}</td>
+                <td>{{ itemCost.date }}</td>
+                <td>
+                    {% if itemCost.isNormal %}
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                    {% else %}
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    {% endif %}
+                </td>
+                <td><a data-toggle="modal" data-target="#myModal" onclick="delID({{ itemCost.id }})">删除</a></td>
+            </tr>
+        {% endfor %}
+        </table>
+        {% if not itemCost_list %}
+            <div class="alert alert-success col-sm-offset-2 col-sm-8 text-center" role="alert">暂时没有投入品使用信息</div>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+{% block pagination %}
+    {% if itemCost_list %}
+        <nav aria-label="Page navigation" class="text-center">
+          <ul class="pagination">
+            {% if itemCost_list.has_previous %}
+            <li>
+              <a href="?page={{ itemCost_list.previous_page_number }}&order={{ order }}&company_current={{ company_current }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for pg in itemCost_list.paginator.page_range %}
+                {% if itemCost_list.number == pg %}
+                    <li class="active"><a href="?page={{ pg }}&order={{ order }}">{{ pg }}</a></li>
+                {% else %}
+                    <li><a href="?page={{ pg }}&order={{ order }}&company_current={{ company_current }}">{{ pg }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if itemCost_list.has_next %}
+            <li>
+              <a href="?page={{ itemCost_list.next_page_number}}&order={{ order }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">提示信息</h4>
+              </div>
+              <div class="modal-body">
+                确认删除?
+              </div>
+              <div class="modal-footer">
+                <input type="hidden" id="delete_id"/>
+                <input type="hidden" id="url_root" value="{% url 'itemCostDelete' %}"/>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <a onclick="urlSubmit()" class="btn btn-primary">确认</a>
+              </div>
+            </div>
+          </div>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block script %}
+<script src="{% static 'js/deleteTips.js'%}"></script>
+<script src="{% static 'js/getCurrentCompany.js'%}"></script>
+{% endblock %}

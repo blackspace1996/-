@@ -1,0 +1,76 @@
+{% extends 'function/base.html' %}
+{% load staticfiles %}
+{% block title %}机构管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/LogoColor.css' %}">
+{% endblock %}
+{% block functionClass2 %}subAsideLinkActive{% endblock %}
+{% block pathNav %}
+    <li>机构管理</li>
+    <li><a href="{% url 'equipmentShareInfo' %}"> 共享设备信息</a></li>
+{% endblock %}
+
+{% block addOrReturn %}
+{% endblock %}
+{% block functionContent %}
+    <div class="input-group col-sm-offset-4 col-sm-4">
+        <input type="text" id="search" class="form-control" placeholder="请输入搜索条件" value="{{ searchCondition }}">
+        <span class="input-group-addon"><a onclick="searchSubmit()"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a></span>
+    </div>
+    <div class="form-group"></div>
+    {% if equipment_list %}
+        <table class="table table-bordered table-hover table-striped text-center">
+        <tr>
+            <td>设备名称</td>
+            <td>隶属公司</td>
+            <td>共享条件</td>
+        </tr>
+    {% for equipment in equipment_list %}
+        <tr>
+            <td>{{ equipment.equipmentName }}</td>
+            <td>{{ equipment.companyID.companyName }}</td>
+            <td style="word-wrap:break-word;word-break:break-all;" width="50%">{{ equipment.shareCondition }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+    {% else %}
+        <div class="alert alert-info col-sm-offset-4 col-sm-4 text-center" role="alert">
+            没有符合条件的共享信息
+        </div>
+    {% endif %}
+{% endblock %}
+{% block pagination %}
+    {% if equipment_list %}
+        <nav aria-label="Page navigation" class="text-center">
+          <ul class="pagination">
+            {% if equipment_list.has_previous %}
+            <li>
+              <a href="?page={{ equipment_list.previous_page_number }}&search={{ searchCondition }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for pg in equipment_list.paginator.page_range %}
+                {% if equipment_list.number == pg %}
+                    <li class="active"><a href="?page={{ pg }}&order={{ order }}&search={{ searchCondition }}">{{ pg }}</a></li>
+                {% else %}
+                    <li><a href="?page={{ pg }}&order={{ order }}&search={{ searchCondition }}">{{ pg }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if equipment_list.has_next %}
+            <li>
+              <a href="?page={{ equipment_list.next_page_number}}&search={{ searchCondition }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+
+    {% endif %}
+{% endblock %}
+{% block script %}
+    <script src="{% static 'js/deleteTips.js'%}"></script>
+    <script src="{% static 'js/getCurrentCompany.js'%}"></script>
+    <script src="{% static 'js/getSearchCondition.js' %}"></script>
+{% endblock %}
